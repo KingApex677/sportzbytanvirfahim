@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamPulse Premium App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bg-cyber-dark {
+            background-color: #0b1110;
+            background-image: 
+                radial-gradient(circle at 70% 30%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 20% 70%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
+        }
+        
+        .video-js {
+            background-color: #000000 !important;
+            border-radius: 0.75rem;
+        }
+        .video-js .vjs-big-play-button {
+            background-color: rgba(20, 184, 166, 0.2) !important;
+            border-color: #14b8a6 !important;
+            color: #14b8a6 !important;
+            border-radius: 50% !important;
+            width: 3em !important; height: 3em !important; line-height: 3em !important;
+            margin-left: -1.5em !important; margin-top: -1.5em !important;
+        }
+        
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #0f1715; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
+    </style>
+</head>
+<body class="bg-cyber-dark text-gray-300 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500/30">
+
+    <header class="border-b border-white/5 bg-black/20 backdrop-blur-md px-6 py-4">
+        <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-white font-semibold text-lg tracking-tight">Stream<span class="text-emerald-400 font-bold">Pulse</span></span>
+                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v4.9 Core Console</span>
+            </div>
+            <div id="syncStatus" class="text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full animate-pulse">
+                Establishing Secure Proxy Tunnel...
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col space-y-6">
+        
+        <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-neutral-900 via-neutral-900/90 to-emerald-950/20 p-6 shadow-xl">
+            <div class="absolute -right-10 -top-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative flex flex-col space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="space-y-1 animate-[fadeIn_0.5s_ease-out]">
+                        <div class="flex items-center gap-2">
+                            <h1 id="dynamicGreeting" class="text-2xl font-light tracking-tight text-white leading-none">
+                                Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">Operator</span>
+                            </h1>
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></span>
+                        </div>
+                        <p id="dynamicStatus" class="text-xs text-gray-400 max-w-xl">
+                            Establishing telemetry data stream connection...
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-emerald-500/20 hover:bg-black/40 transition-all duration-300">
+                        <div class="absolute top-0 left-0 w-full h-[2px] bg-emerald-500/20 group-hover:bg-emerald-400/50 transition duration-300"></div>
+                        <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">📺 Channels</span>
+                        <span id="heroStatChannels" class="text-2xl font-bold text-white font-mono">0</span>
+                    </div>
+
+                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-cyan-500/20 hover:bg-black/40 transition-all duration-300">
+                        <div class="absolute top-0 left-0 w-full h-[2px] bg-cyan-500/20 group-hover:bg-cyan-400/50 transition duration-300"></div>
+                        <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">📂 Categories</span>
+                        <span id="heroStatCategories" class="text-2xl font-bold text-cyan-400 font-mono">0</span>
+                    </div>
+
+                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-rose-500/20 hover:bg-black/40 transition-all duration-300">
+                        <div class="absolute top-0 left-0 w-full h-[2px] bg-rose-500/20 group-hover:bg-rose-400/50 transition duration-300"></div>
+                        <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">❤️ Favorites</span>
+                        <span id="heroStatFavorites" class="text-2xl font-bold text-rose-400 font-mono">0</span>
+                    </div>
+
+                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-purple-500/20 hover:bg-purple-400/50 transition-all duration-300">
+                        <div class="absolute top-0 left-0 w-full h-[2px] bg-purple-500/20 group-hover:bg-purple-400/50 transition duration-300"></div>
+                        <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">🔴 Live Status</span>
+                        <div class="flex items-center gap-1.5 pt-1">
+                            <span class="text-md font-bold text-emerald-400 font-mono tracking-wider uppercase">Online</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+            
+            <div class="lg:col-span-3 flex flex-col space-y-6">
+                
+                <div class="relative bg-black rounded-xl p-1 border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] group overflow-hidden">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                    <div class="relative bg-black rounded-lg aspect-video w-full overflow-hidden shadow-inner">
+                        <video id="my-video" class="video-js vjs-big-play-centered w-full h-full" controls preload="auto">
+                            <p class="vjs-no-js">HTML5 Video not supported.</p>
+                        </video>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-white/[0.02] border border-white/5 p-3 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <div class="text-xs">
+                            <span class="text-gray-500">Active Stream:</span> 
+                            <span id="streamTitle" class="text-white font-medium ml-1">No source active</span>
+                        </div>
+                    </div>
+                    <div class="text-right font-mono text-[11px] tracking-wider text-gray-400 flex items-center gap-2 bg-black/30 px-3 py-1 rounded-md border border-white/5">
+                        <span id="liveDate" class="text-gray-500">---</span>
+                        <span class="text-white/20">|</span>
+                        <span id="liveTime" class="text-cyan-400 font-bold">00:00:00</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col space-y-2">
+                    <span class="text-[11px] font-bold tracking-wider text-gray-500 uppercase flex items-center gap-1.5">
+                        <span class="w-1 h-3 bg-emerald-400 rounded-sm"></span> Stream Categories
+                    </span>
+                    <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth">
+                        <button class="bg-emerald-500 text-black font-semibold text-xs px-4 py-2 rounded-lg border border-emerald-400/20 whitespace-nowrap">
+                            All Channels
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex flex-col bg-neutral-900/40 border border-white/5 rounded-xl backdrop-blur-sm overflow-hidden h-[650px] lg:h-full lg:min-h-[500px]">
+                <div class="p-4 border-b border-white/5 bg-black/20 flex-shrink-0">
+                    <input type="text" id="searchChannel" placeholder="Search filtered pool..." class="w-full bg-white/[0.03] border border-white/10 text-white pl-3 pr-8 py-2 rounded-lg text-xs focus:outline-none focus:border-emerald-500/40 transition">
+                </div>
+                
+                <div id="channelList" class="overflow-y-auto flex-grow p-2 space-y-1">
+                    <div class="text-gray-600 text-center py-12 text-xs">Awaiting secure parsing pipeline decode...</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+    <script>
+        let allChannels = [];
+        let filteredChannels = [];
+        let currentSelectedCategory = "All Channels";
+        
+        const player = videojs('my-video');
+        const channelListContainer = document.getElementById('channelList');
+        const categoryContainer = document.getElementById('categoryContainer');
+        const searchInput = document.getElementById('searchChannel');
+        const streamTitle = document.getElementById('streamTitle');
+        const syncStatus = document.getElementById('syncStatus');
+
+        const heroStatChannels = document.getElementById('heroStatChannels');
+        const heroStatCategories = document.getElementById('heroStatCategories');
+        const heroStatFavorites = document.getElementById('heroStatFavorites');
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveDate').innerText = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
+            document.getElementById('liveTime').innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        function updateGreeting() {
+            const currentHour = new Date().getHours();
+            const greetingElement = document.getElementById('dynamicGreeting');
+            const statusElement = document.getElementById('dynamicStatus');
+            
+            let finalGreeting = "";
+            if (currentHour >= 5 && currentHour < 12) {
+                finalGreeting = 'Good Morning <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>';
+            } else if (currentHour >= 12 && currentHour < 17) {
+                finalGreeting = 'Good Afternoon <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>';
+            } else if (currentHour >= 17 && currentHour < 21) {
+                finalGreeting = 'Good Evening <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>';
+            } else {
+                finalGreeting = 'Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">🌙</span>';
+            }
+            greetingElement.innerHTML = finalGreeting;
+            statusElement.innerText = "Secure Stream Gateway Active & Verified";
+        }
+
+        function updateDashboardStats() {
+            const uniqueCategories = new Set(allChannels.map(c => c.category));
+            heroStatChannels.innerText = allChannels.length.toLocaleString();
+            heroStatCategories.innerText = uniqueCategories.size;
+            heroStatFavorites.innerText = "0";
+        }
+
+        async function loadSecureNetlifyPlaylist() {
+            try {
+                updateGreeting();
+                const response = await fetch('/.netlify/functions/stream');
+                if (!response.ok) throw new Error(`HTTP Error`);
+                const data = await response.text();
+
+                if (data && data.trim().length > 0) {
+                    allChannels = parseM3U(data);
+                    filteredChannels = allChannels;
+                    renderCategories();
+                    renderChannels();
+                    updateDashboardStats();
+                }
+                syncStatus.innerText = "Secure Node Tunneled";
+                syncStatus.className = "text-xs text-emerald-400 font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full";
+            } catch (error) {
+                syncStatus.innerText = "Offline Mode Active";
+                syncStatus.className = "text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full";
+                channelListContainer.innerHTML = `<div class="text-gray-500 text-center py-12 text-xs px-4">Local environment streaming link ready. Check server configuration.</div>`;
+            }
+        }
+
+        function parseM3U(data) {
+            const lines = data.split(/\r?\n/);
+            const parsed = [];
+            let currentChannel = {};
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('#EXTINF:')) {
+                    const nameIndex = line.lastIndexOf(',');
+                    if (nameIndex !== -1) currentChannel.name = line.substring(nameIndex + 1).trim();
+                    const groupMatch = line.match(/group-title="([^"]+)"/);
+                    currentChannel.category = groupMatch ? groupMatch[1] : "Uncategorized";
+                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                    if (logoMatch) currentChannel.logo = logoMatch[1];
+                } else if (line.startsWith('http') || line.includes('://')) {
+                    currentChannel.url = line;
+                    if (!currentChannel.name) currentChannel.name = `Channel ${parsed.length + 1}`;
+                    parsed.push(currentChannel);
+                    currentChannel = {};
+                }
+            }
+            return parsed;
+        }
+
+        function renderCategories() {
+            const uniqueCategories = new Set(allChannels.map(c => c.category));
+            const sortedCategories = ["All Channels", ...Array.from(uniqueCategories).sort()];
+            categoryContainer.innerHTML = '';
+            sortedCategories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = category === currentSelectedCategory
+                    ? "bg-emerald-500 text-black font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+                    : "bg-white/[0.02] text-gray-400 hover:text-white font-medium text-xs px-4 py-2 rounded-lg whitespace-nowrap border border-white/5";
+                btn.innerText = category;
+                btn.onclick = () => {
+                    currentSelectedCategory = category;
+                    renderCategories();
+                    filterAndRenderPool();
+                };
+                categoryContainer.appendChild(btn);
+            });
+        }
+
+        function filterAndRenderPool() {
+            let pool = allChannels;
+            if (currentSelectedCategory !== "All Channels") {
+                pool = pool.filter(c => c.category === currentSelectedCategory);
+            }
+            const query = searchInput.value.toLowerCase().trim();
+            if (query) {
+                pool = pool.filter(c => c.name.toLowerCase().includes(query));
+            }
+            filteredChannels = pool;
+            renderChannels();
+        }
+
+        function renderChannels() {
+            channelListContainer.innerHTML = '';
+            if (filteredChannels.length === 0) {
+                channelListContainer.innerHTML = '<div class="text-gray-500 text-center py-8 text-xs">No matching streams located.</div>';
+                return;
+            }
+            filteredChannels.forEach(channel => {
+                const item = document.createElement('button');
+                item.className = "w-full text-left px-3 py-2.5 rounded-lg bg-white/[0.01] hover:bg-white/[0.04] border border-white/5 flex items-center gap-3 text-xs group/item";
+                const imgHtml = channel.logo 
+                    ? `<img src="${channel.logo}" class="w-5 h-5 object-contain rounded opacity-60">`
+                    : `<div class="w-5 h-5 bg-white/5 flex items-center justify-center rounded text-[9px] text-emerald-400">■</div>`;
+                item.innerHTML = `${imgHtml} <div class="flex flex-col truncate"><span class="truncate text-gray-300 font-medium">${channel.name}</span><span class="text-[9px] text-gray-500 truncate mt-0.5">${channel.category}</span></div>`;
+                item.onclick = () => {
+                    playStream(channel.url, channel.name);
+                    document.querySelectorAll('#channelList button').forEach(b => b.classList.remove('bg-emerald-500/[0.06]', 'border-emerald-500/40'));
+                    item.classList.add('bg-emerald-500/[0.06]', 'border-emerald-500/40');
+                };
+                channelListContainer.appendChild(item);
+            });
+        }
+
+        function playStream(url, name) {
+            streamTitle.innerText = name;
+            
+            if (player.controlBar.qualityButton) {
+                player.controlBar.removeChild(player.controlBar.qualityButton);
+                player.controlBar.qualityButton = null;
+            }
+            
+            player.src({ 
+                src: url, 
+                type: url.includes('.mpd') ? 'application/dash+xml' : 'application/x-mpegURL' 
+            });
+
+            player.ready(() => {
+                initializeQualitySelector();
+            });
+
+            player.play().catch(err => console.error(err));
+        }
+
+        function initializeQualitySelector() {
+            let qualityLevels = player.qualityLevels ? player.qualityLevels() : null;
+            
+            if (!qualityLevels) {
+                createStaticQualityUI("Auto (Single Stream)");
+                return;
+            }
+
+            qualityLevels.on('addqualitylevel', function() {
+                updateQualityMenu(qualityLevels);
+            });
+
+            setTimeout(() => {
+                if (qualityLevels.length <= 1) {
+                    createStaticQualityUI("Auto (Single Stream)");
+                } else {
+                    updateQualityMenu(qualityLevels);
+                    restorePreferredQuality(qualityLevels);
+                }
+            }, 1200);
+        }
+
+        function createStaticQualityUI(labelString) {
+            if (player.controlBar.qualityButton) return;
+
+            const Button = videojs.getComponent('Button');
+            const staticBtn = new Button(player, {
+                className: 'vjs-visible-text-toggle text-xs px-2 cursor-default font-mono text-gray-400 flex items-center',
+            });
+            
+            staticBtn.el().innerHTML = `<span class="text-neutral-500 mr-1">⚙</span> Quality: ${labelString}`;
+            player.controlBar.qualityButton = player.controlBar.addChild(staticBtn);
+        }
+
+        function updateQualityMenu(qualityLevels) {
+            if (!qualityLevels || qualityLevels.length <= 1) return;
+
+            let uniqueLevels = [];
+            for (let i = 0; i < qualityLevels.length; i++) {
+                let level = qualityLevels[i];
+                if (level.height && !uniqueLevels.some(l => l.height === level.height)) {
+                    uniqueLevels.push({ index: i, height: level.height });
+                }
+            }
+            uniqueLevels.sort((a, b) => b.height - a.height);
+
+            let preferred = localStorage.getItem('streamPulse_preferredQuality') || 'auto';
+            let currentLabel = preferred === 'auto' ? 'Auto' : `${preferred}p`;
+
+            // If it already exists, just update its elements natively to preserve mouse positioning context
+            if (player.controlBar.qualityButton) {
+                const labelContainer = player.controlBar.qualityButton.el().querySelector('.quality-label-text');
+                if (labelContainer) labelContainer.innerText = currentLabel;
+                
+                const deck = player.controlBar.qualityButton.el().querySelector('#qualityDropdownDeck');
+                if (deck) {
+                    deck.innerHTML = renderDropdownButtons(uniqueLevels, preferred);
+                    attachDropdownButtonEvents(deck, qualityLevels);
+                }
+                return;
+            }
+
+            const Component = videojs.getComponent('Component');
+            const qualityMenuBtn = new Component(player, {
+                className: 'vjs-control vjs-button relative cursor-pointer flex items-center justify-center font-mono text-xs text-gray-300 hover:text-emerald-400 transition-all duration-200'
+            });
+
+            qualityMenuBtn.el().innerHTML = `
+                <div class="flex items-center px-3 h-full gap-1.5 select-none hover:bg-white/5 rounded-md transition">
+                    <span class="text-xs text-gray-400">⚙</span> 
+                    <span>Quality: <span class="font-bold text-emerald-400 quality-label-text">${currentLabel}</span></span>
+                </div>
+                <div id="qualityDropdownDeck" class="absolute bottom-12 right-0 mb-1 hidden bg-neutral-900/95 backdrop-blur-lg border border-white/10 rounded-xl p-1.5 w-36 shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col space-y-0.5 animate-[fadeIn_0.15s_ease-out] z-50">
+                    ${renderDropdownButtons(uniqueLevels, preferred)}
+                </div>
+            `;
+
+            const deck = qualityMenuBtn.el().querySelector('#qualityDropdownDeck');
+
+            // JavaScript explicit event assignment to handle closing and opening safely
+            qualityMenuBtn.el().addEventListener('mouseenter', () => {
+                deck.style.setProperty('display', 'flex', 'important');
+            });
+
+            qualityMenuBtn.el().addEventListener('mouseleave', () => {
+                deck.style.setProperty('display', 'none', 'important');
+            });
+
+            attachDropdownButtonEvents(deck, qualityLevels);
+            player.controlBar.qualityButton = player.controlBar.addChild(qualityMenuBtn);
+        }
+
+        function renderDropdownButtons(uniqueLevels, preferred) {
+            let autoSelected = preferred === 'auto';
+            let autoClass = autoSelected ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/20' : 'text-gray-400 border-transparent';
+            
+            let html = `
+                <button data-quality="auto" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all flex justify-between items-center ${autoClass}">
+                    <span>Auto</span>
+                    ${autoSelected ? '<span class="text-[10px]">●</span>' : ''}
+                </button>
+            `;
+
+            uniqueLevels.forEach(lvl => {
+                let isSel = preferred === String(lvl.height);
+                let lvlClass = isSel ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/20' : 'text-gray-400 border-transparent';
+                html += `
+                    <button data-quality="${lvl.height}" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all flex justify-between items-center ${lvlClass}">
+                        <span>${lvl.height}p</span>
+                        ${isSel ? '<span class="text-[10px]">●</span>' : ''}
+                    </button>
+                `;
+            });
+            return html;
+        }
+
+        function attachDropdownButtonEvents(deckElement, qualityLevels) {
+            deckElement.querySelectorAll('button').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    let targetQuality = btn.getAttribute('data-quality');
+                    savePreferredQuality(targetQuality, qualityLevels);
+                    
+                    // Instantly collapse the dropdown visual layout
+                    deckElement.style.setProperty('display', 'none', 'important');
+
+                    // Run clean local indicators update instead of component refresh loops
+                    updateQualityMenu(qualityLevels);
+                };
+            });
+        }
+
+        function savePreferredQuality(targetQuality, qualityLevels) {
+            localStorage.setItem('streamPulse_preferredQuality', targetQuality);
+
+            if (targetQuality === 'auto') {
+                for (let i = 0; i < qualityLevels.length; i++) {
+                    qualityLevels[i].enabled = true;
+                }
+            } else {
+                let heightTarget = parseInt(targetQuality);
+                let matchFound = false;
+
+                for (let i = 0; i < qualityLevels.length; i++) {
+                    if (qualityLevels[i].height === heightTarget) {
+                        qualityLevels[i].enabled = true;
+                        matchFound = true;
+                    } else {
+                        qualityLevels[i].enabled = false;
+                    }
+                }
+
+                if (!matchFound) {
+                    for (let i = 0; i < qualityLevels.length; i++) qualityLevels[i].enabled = true;
+                }
+            }
+        }
+
+        function restorePreferredQuality(qualityLevels) {
+            let preferred = localStorage.getItem('streamPulse_preferredQuality');
+            if (preferred) {
+                savePreferredQuality(preferred, qualityLevels);
+            }
+        }
+
+        searchInput.addEventListener('input', filterAndRenderPool);
+        window.onload = loadSecureNetlifyPlaylist;
+    </script>
+</body>
+</html>
