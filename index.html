@@ -12,6 +12,10 @@
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulseTrack {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
         .bg-cyber-dark {
             background-color: #0b1110;
             background-image: 
@@ -23,6 +27,10 @@
             background-color: #000000 !important;
             border-radius: 0.75rem;
         }
+        /* Hide Default VideoJS Loading Spinner completely for custom UI overlay replacement */
+        .vjs-loading-spinner {
+            display: none !important;
+        }
         .video-js .vjs-big-play-button {
             background-color: rgba(20, 184, 166, 0.2) !important;
             border-color: #14b8a6 !important;
@@ -30,6 +38,10 @@
             border-radius: 50% !important;
             width: 3em !important; height: 3em !important; line-height: 3em !important;
             margin-left: -1.5em !important; margin-top: -1.5em !important;
+        }
+        
+        .animate-pulse-track {
+            animation: pulseTrack 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
         
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -44,7 +56,7 @@
         <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <span class="text-white font-semibold text-lg tracking-tight">Stream<span class="text-emerald-400 font-bold">Pulse</span></span>
-                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v5.2 Pro Console</span>
+                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v6.0 Ultima Console</span>
             </div>
             <div id="syncStatus" class="text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full animate-pulse">
                 Establishing Secure Proxy Tunnel...
@@ -109,10 +121,18 @@
                 
                 <div class="relative bg-black rounded-xl p-1 border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] group overflow-hidden">
                     <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                    
                     <div class="relative bg-black rounded-lg aspect-video w-full overflow-hidden shadow-inner">
                         <video id="my-video" class="video-js vjs-big-play-centered w-full h-full" controls preload="auto" crossorigin="anonymous">
                             <p class="vjs-no-js">HTML5 Video not supported.</p>
                         </video>
+
+                        <div id="premiumBufferOverlay" class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center backdrop-blur-[2px] opacity-0 pointer-events-none transition-all duration-300 z-10">
+                            <div class="w-48 bg-neutral-900 border border-white/5 h-1.5 rounded-full relative overflow-hidden mb-2 shadow-inner">
+                                <div class="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-transparent via-emerald-400 to-cyan-400 rounded-full animate-pulse-track"></div>
+                            </div>
+                            <span id="bufferOverlayLabel" class="text-[10px] font-mono tracking-widest uppercase text-emerald-400 font-semibold drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">Loading Stream</span>
+                        </div>
                     </div>
                 </div>
 
@@ -145,7 +165,6 @@
                     </div>
                     
                     <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
-                        
                         <button id="refreshStreamBtn" onclick="refreshActiveStream()" class="flex items-center px-2.5 py-1.5 bg-neutral-900 border border-white/10 rounded-lg font-mono text-xs text-gray-300 hover:text-emerald-400 hover:border-emerald-500/30 transition active:scale-95 select-none gap-1" title="Hard-reload current stream interface">
                             <span class="text-emerald-500 font-bold">⟳</span> 
                             <span>Refresh</span>
@@ -172,10 +191,7 @@
                         <span class="w-1 h-3 bg-emerald-400 rounded-sm"></span> Stream Categories
                     </span>
                     <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth">
-                        <button class="bg-emerald-500 text-black font-semibold text-xs px-4 py-2 rounded-lg border border-emerald-400/20 whitespace-nowrap">
-                            All Channels
-                        </button>
-                    </div>
+                        </div>
                 </div>
 
             </div>
@@ -198,11 +214,12 @@
     <script>
         let allChannels = [];
         let filteredChannels = [];
+        let favoriteChannelUrls = JSON.parse(localStorage.getItem('streamPulse_favs')) || [];
         let currentSelectedCategory = "All Channels";
         let currentActiveUrl = "";
         let currentActiveName = "";
         let retryCounter = 0;
-        const MAX_RETRIES = 4;
+        const MAX_RETRIES = 2; 
         
         const player = videojs('my-video');
         const channelListContainer = document.getElementById('channelList');
@@ -212,6 +229,8 @@
         const syncStatus = document.getElementById('syncStatus');
         const externalQualityModule = document.getElementById('externalQualityModule');
         const telemetryOverlayPanel = document.getElementById('telemetryOverlayPanel');
+        const premiumBufferOverlay = document.getElementById('premiumBufferOverlay');
+        const bufferOverlayLabel = document.getElementById('bufferOverlayLabel');
 
         const heroStatChannels = document.getElementById('heroStatChannels');
         const heroStatCategories = document.getElementById('heroStatCategories');
@@ -243,41 +262,73 @@
             statusElement.innerText = "Secure Stream Gateway Active & Verified";
         }
 
-        // Auto-Retry Error Event Handlers
+        player.on('waiting', () => {
+            bufferOverlayLabel.innerText = "Buffering Live Matrix";
+            premiumBufferOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        });
+        player.on('playing', () => {
+            premiumBufferOverlay.classList.add('opacity-0', 'pointer-events-none');
+        });
+
         player.on('error', function() {
             const err = player.error();
-            console.warn(`Encountered Video.js Player Error [Code ${err.code}]: ${err.message}`);
+            console.warn(`Stream Pulse Exception Core [Code ${err.code}]: ${err.message}`);
             
             if (currentActiveUrl && retryCounter < MAX_RETRIES) {
                 retryCounter++;
                 document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-amber-500 animate-ping flex-shrink-0";
-                streamTitle.innerText = `Reconnecting (${retryCounter}/${MAX_RETRIES})... ${currentActiveName}`;
+                streamTitle.innerText = `Reconnecting Node (${retryCounter}/${MAX_RETRIES})... ${currentActiveName}`;
                 
+                bufferOverlayLabel.innerText = `Retrying Node Link (${retryCounter}/${MAX_RETRIES})`;
+                premiumBufferOverlay.classList.remove('opacity-0', 'pointer-events-none');
+
                 setTimeout(() => {
-                    console.log(`Executing Automatic Recovery Attempt ${retryCounter}...`);
                     player.src({ 
                         src: currentActiveUrl, 
                         type: currentActiveUrl.includes('.mpd') ? 'application/dash+xml' : 'application/x-mpegURL' 
                     });
                     player.load();
                     player.play().then(() => {
-                        // Success Reset
                         retryCounter = 0;
                         document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0";
                         streamTitle.innerText = currentActiveName;
-                    }).catch(e => console.error("Retry lock failed, looping to fallback step"));
-                }, 3000);
-            } else if (retryCounter >= MAX_RETRIES) {
-                document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-rose-500 flex-shrink-0";
-                streamTitle.innerText = `Playback Terminated: ${currentActiveName}`;
+                        premiumBufferOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    }).catch(e => console.log("Retrying lifecycle waiting..."));
+                }, 2500);
+            } else {
+                triggerAutoNextFallback();
             }
         });
+
+        function triggerAutoNextFallback() {
+            console.warn("Current active stream unresponsive. Parsing fallback matrices for next logical channel...");
+            let currentIndex = allChannels.findIndex(c => c.url === currentActiveUrl);
+            
+            if (currentIndex !== -1 && allChannels.length > 1) {
+                let nextIndex = (currentIndex + 1) % allChannels.length;
+                let nextChannel = allChannels[nextIndex];
+                
+                document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse flex-shrink-0";
+                streamTitle.innerText = `Failed. Auto Skipping to: ${nextChannel.name}`;
+                
+                bufferOverlayLabel.innerText = "Stream Dead. Skipping...";
+                premiumBufferOverlay.classList.remove('opacity-0', 'pointer-events-none');
+
+                setTimeout(() => {
+                    playStream(nextChannel.url, nextChannel.name);
+                }, 2000);
+            } else {
+                document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-rose-600 flex-shrink-0";
+                streamTitle.innerText = "Fatal Error: Stream Pipeline Terminated.";
+                bufferOverlayLabel.innerText = "No Fallback Sources Online";
+            }
+        }
 
         function updateDashboardStats() {
             const uniqueCategories = new Set(allChannels.map(c => c.category));
             heroStatChannels.innerText = allChannels.length.toLocaleString();
             heroStatCategories.innerText = uniqueCategories.size;
-            heroStatFavorites.innerText = "0";
+            heroStatFavorites.innerText = favoriteChannelUrls.length.toString();
         }
 
         async function loadSecureNetlifyPlaylist() {
@@ -303,6 +354,7 @@
             }
         }
 
+        // --- STRAY CHARACTER REMOVED FROM THIS FUNCTION ---
         function parseM3U(data) {
             const lines = data.split(/\r?\n/);
             const parsed = [];
@@ -329,8 +381,9 @@
 
         function renderCategories() {
             const uniqueCategories = new Set(allChannels.map(c => c.category));
-            const sortedCategories = ["All Channels", ...Array.from(uniqueCategories).sort()];
+            const sortedCategories = ["All Channels", "❤️ Favorites Pool", ...Array.from(uniqueCategories).sort()];
             categoryContainer.innerHTML = '';
+            
             sortedCategories.forEach(category => {
                 const btn = document.createElement('button');
                 btn.className = category === currentSelectedCategory
@@ -348,9 +401,13 @@
 
         function filterAndRenderPool() {
             let pool = allChannels;
-            if (currentSelectedCategory !== "All Channels") {
+            
+            if (currentSelectedCategory === "❤️ Favorites Pool") {
+                pool = pool.filter(c => favoriteChannelUrls.includes(c.url));
+            } else if (currentSelectedCategory !== "All Channels") {
                 pool = pool.filter(c => c.category === currentSelectedCategory);
             }
+            
             const query = searchInput.value.toLowerCase().trim();
             if (query) {
                 pool = pool.filter(c => c.name.toLowerCase().includes(query));
@@ -366,30 +423,77 @@
                 return;
             }
             filteredChannels.forEach(channel => {
-                const item = document.createElement('button');
-                item.className = "w-full text-left px-3 py-2.5 rounded-lg bg-white/[0.01] hover:bg-white/[0.04] border border-white/5 flex items-center gap-3 text-xs group/item";
+                const isFavorite = favoriteChannelUrls.includes(channel.url);
+                
+                const rowWrapper = document.createElement('div');
+                rowWrapper.className = "w-full flex items-center gap-1 group/row rounded-lg hover:bg-white/[0.03] pr-2 transition duration-200";
+
+                const itemBtn = document.createElement('button');
+                itemBtn.className = "flex-grow text-left px-3 py-2.5 flex items-center gap-3 text-xs truncate";
+                if (currentActiveUrl === channel.url) {
+                    itemBtn.className += " bg-emerald-500/[0.04] border-l-2 border-emerald-500 pl-2.5";
+                }
+                
                 const imgHtml = channel.logo 
                     ? `<img src="${channel.logo}" class="w-5 h-5 object-contain rounded opacity-60">`
                     : `<div class="w-5 h-5 bg-white/5 flex items-center justify-center rounded text-[9px] text-emerald-400">■</div>`;
-                item.innerHTML = `${imgHtml} <div class="flex flex-col truncate"><span class="truncate text-gray-300 font-medium">${channel.name}</span><span class="text-[9px] text-gray-500 truncate mt-0.5">${channel.category}</span></div>`;
-                item.onclick = () => {
+                
+                itemBtn.innerHTML = `
+                    ${imgHtml} 
+                    <div class="flex flex-col truncate">
+                        <span class="truncate text-gray-300 font-medium group-hover/row:text-white">${channel.name}</span>
+                        <span class="text-[9px] text-gray-500 truncate mt-0.5">${channel.category}</span>
+                    </div>
+                `;
+                
+                itemBtn.onclick = () => {
                     playStream(channel.url, channel.name);
-                    document.querySelectorAll('#channelList button').forEach(b => b.classList.remove('bg-emerald-500/[0.06]', 'border-emerald-500/40'));
-                    item.classList.add('bg-emerald-500/[0.06]', 'border-emerald-500/40');
                 };
-                channelListContainer.appendChild(item);
+
+                const favBtn = document.createElement('button');
+                favBtn.className = `p-2 text-sm transition-all rounded-md ${isFavorite ? 'text-amber-400 opacity-100 scale-100' : 'text-gray-600 opacity-20 hover:opacity-100 hover:text-white scale-90 hover:scale-100'}`;
+                favBtn.innerHTML = "★";
+                favBtn.title = isFavorite ? "Remove from Favorites" : "Add to Favorites";
+                favBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFavoriteChannel(channel.url);
+                };
+
+                rowWrapper.appendChild(itemBtn);
+                rowWrapper.appendChild(favBtn);
+                channelListContainer.appendChild(rowWrapper);
             });
+        }
+
+        function toggleFavoriteChannel(url) {
+            let index = favoriteChannelUrls.indexOf(url);
+            if (index === -1) {
+                favoriteChannelUrls.push(url);
+            } else {
+                favoriteChannelUrls.splice(index, 1);
+            }
+            localStorage.setItem('streamPulse_favs', JSON.stringify(favoriteChannelUrls));
+            
+            updateDashboardStats();
+            if (currentSelectedCategory === "❤️ Favorites Pool") {
+                filterAndRenderPool();
+            } else {
+                renderChannels();
+            }
         }
 
         function playStream(url, name) {
             currentActiveUrl = url;
             currentActiveName = name;
-            retryCounter = 0; // Reset runtime retries
+            retryCounter = 0; 
             
             streamTitle.innerText = name;
             document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0";
             externalQualityModule.innerHTML = ''; 
             
+            bufferOverlayLabel.innerText = "Initializing Feed";
+            premiumBufferOverlay.classList.remove('opacity-0', 'pointer-events-none');
+
             player.src({ 
                 src: url, 
                 type: url.includes('.mpd') ? 'application/dash+xml' : 'application/x-mpegURL' 
@@ -397,18 +501,15 @@
 
             player.ready(() => {
                 initializeQualitySelector();
-                // Render stream profile analytics data metrics
                 renderTelemetryMetrics(url);
+                renderChannels(); 
             });
 
             player.play().catch(err => console.error(err));
         }
 
-        // Logic parsing mock stream information parameters safely
         function renderTelemetryMetrics(url) {
             telemetryOverlayPanel.classList.remove('hidden');
-            
-            // Derive accurate parsing variables from internal media components
             player.one('loadedmetadata', () => {
                 const apiVideo = document.querySelector('#my-video_html5_api');
                 if (apiVideo && apiVideo.videoWidth) {
@@ -417,34 +518,25 @@
                     document.getElementById('telemetryRes').innerText = "1920×1080";
                 }
             });
-
             document.getElementById('telemetryCodec').innerText = url.includes('.mpd') ? "AV1 / AAC" : "H.264 / AAC";
             document.getElementById('telemetryFPS').innerText = "50 FPS";
             document.getElementById('telemetryLatency').innerText = "3.2s";
         }
 
-        // One-Click Stream Hard Refresh Engine
         function refreshActiveStream() {
-            if (!currentActiveUrl) {
-                alert("No active stream source loaded to reload.");
-                return;
-            }
-            console.log("Triggering hard refresh routine on current node...");
+            if (!currentActiveUrl) return;
             playStream(currentActiveUrl, currentActiveName);
         }
 
         function initializeQualitySelector() {
             let qualityLevels = player.qualityLevels ? player.qualityLevels() : null;
-            
             if (!qualityLevels) {
                 createStaticQualityUI("Single Source Stream");
                 return;
             }
-
             qualityLevels.on('addqualitylevel', function() {
                 updateQualityMenu(qualityLevels);
             });
-
             setTimeout(() => {
                 if (qualityLevels.length <= 1) {
                     createStaticQualityUI("Single Source Stream");
