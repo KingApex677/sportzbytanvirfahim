@@ -73,7 +73,7 @@
                     <div class="space-y-1 animate-[fadeIn_0.5s_ease-out]">
                         <div class="flex items-center gap-2">
                             <h1 id="dynamicGreeting" class="text-2xl font-light tracking-tight text-white leading-none">
-                                Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">Operator</span>
+                                Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>
                             </h1>
                             <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></span>
                         </div>
@@ -118,6 +118,13 @@
             
             <div class="lg:col-span-3 flex flex-col space-y-4">
                 
+                <div class="flex flex-col space-y-2">
+                    <span class="text-[11px] font-bold tracking-wider text-gray-500 uppercase flex items-center gap-1.5">
+                        <span class="w-1 h-3 bg-emerald-400 rounded-sm"></span> Stream Categories
+                    </span>
+                    <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"></div>
+                </div>
+
                 <div class="relative bg-black rounded-xl p-1 border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] group overflow-hidden">
                     <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
                     
@@ -193,13 +200,6 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col space-y-2">
-                    <span class="text-[11px] font-bold tracking-wider text-gray-500 uppercase flex items-center gap-1.5">
-                        <span class="w-1 h-3 bg-emerald-400 rounded-sm"></span> Stream Categories
-                    </span>
-                    <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"></div>
-                </div>
-
             </div>
 
             <div class="flex flex-col bg-neutral-900/40 border border-white/5 rounded-xl backdrop-blur-sm overflow-hidden h-[650px] lg:h-full lg:min-h-[500px]">
@@ -231,7 +231,6 @@
         let currentViewerValue = 0;
         let viewerIntervalLoop = null;
 
-        // Static configuration pointer to your primary proxy service pipeline
         const STREAM_SOURCE_URL = "/.netlify/functions/stream";
         
         const player = videojs('my-video');
