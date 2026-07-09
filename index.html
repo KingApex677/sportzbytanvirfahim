@@ -722,9 +722,83 @@
             }
         }
 
+
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
+                if (tag === "input" || tag === "textarea") return;
+
+                const key = e.key.toLowerCase();
+
+                switch (key) {
+                    case " ":
+                        e.preventDefault();
+                        if (player.paused()) player.play();
+                        else player.pause();
+                        break;
+                    case "m":
+                        player.muted(!player.muted());
+                        break;
+                    case "f":
+                        if (player.isFullscreen()) player.exitFullscreen();
+                        else player.requestFullscreen();
+                        break;
+                    case "p":
+                        const v = document.querySelector('#my-video_html5_api');
+                        if (v && document.pictureInPictureEnabled && !document.pictureInPictureElement) {
+                            v.requestPictureInPicture().catch(()=>{});
+                        } else if (document.pictureInPictureElement) {
+                            document.exitPictureInPicture().catch(()=>{});
+                        }
+                        break;
+                    case "arrowup":
+                        e.preventDefault();
+                        player.volume(Math.min(1, player.volume() + 0.1));
+                        break;
+                    case "arrowdown":
+                        e.preventDefault();
+                        player.volume(Math.max(0, player.volume() - 0.1));
+                        break;
+                    case "arrowright":
+                        e.preventDefault();
+                        if (!player.liveTracker || !player.liveTracker.isLive()) {
+                            player.currentTime(player.currentTime() + 10);
+                        }
+                        break;
+                    case "arrowleft":
+                        e.preventDefault();
+                        if (!player.liveTracker || !player.liveTracker.isLive()) {
+                            player.currentTime(Math.max(0, player.currentTime() - 10));
+                        }
+                        break;
+                    case "n":
+                        e.preventDefault();
+                        if (!filteredChannels.length) return;
+                        let idx = filteredChannels.findIndex(c => c.url === currentActiveUrl);
+                        idx = (idx + 1) % filteredChannels.length;
+                        playStream(filteredChannels[idx].url, filteredChannels[idx].name);
+                        break;
+                    case "b":
+                        e.preventDefault();
+                        if (!filteredChannels.length) return;
+                        let idy = filteredChannels.findIndex(c => c.url === currentActiveUrl);
+                        if (idy < 0) idy = 0;
+                        idy = (idy - 1 + filteredChannels.length) % filteredChannels.length;
+                        playStream(filteredChannels[idy].url, filteredChannels[idy].name);
+                        break;
+                    case "r":
+                        e.preventDefault();
+                        refreshActiveStream();
+                        break;
+                }
+            });
+        }
+
+
         searchInput.addEventListener('input', filterAndRenderPool);
         
         window.onload = function() {
+            initializeKeyboardShortcuts();
             loadPlaylistData();
         };
     </script>
