@@ -116,18 +116,24 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-white/[0.02] border border-white/5 p-3 rounded-xl">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <div class="text-xs">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.02] border border-white/5 p-3 rounded-xl">
+                    <div class="flex items-center gap-3 truncate max-w-md">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></div>
+                        <div class="text-xs truncate">
                             <span class="text-gray-500">Active Stream:</span> 
                             <span id="streamTitle" class="text-white font-medium ml-1">No source active</span>
                         </div>
                     </div>
-                    <div class="text-right font-mono text-[11px] tracking-wider text-gray-400 flex items-center gap-2 bg-black/30 px-3 py-1 rounded-md border border-white/5">
-                        <span id="liveDate" class="text-gray-500">---</span>
-                        <span class="text-white/20">|</span>
-                        <span id="liveTime" class="text-cyan-400 font-bold">00:00:00</span>
+                    
+                    <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                        <div id="externalQualityModule" class="relative">
+                            </div>
+
+                        <div class="text-right font-mono text-[11px] tracking-wider text-gray-400 flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 flex-shrink-0">
+                            <span id="liveDate" class="text-gray-500 hidden md:inline">---</span>
+                            <span class="text-white/20 hidden md:inline">|</span>
+                            <span id="liveTime" class="text-cyan-400 font-bold">00:00:00</span>
+                        </div>
                     </div>
                 </div>
 
@@ -170,6 +176,7 @@
         const searchInput = document.getElementById('searchChannel');
         const streamTitle = document.getElementById('streamTitle');
         const syncStatus = document.getElementById('syncStatus');
+        const externalQualityModule = document.getElementById('externalQualityModule');
 
         const heroStatChannels = document.getElementById('heroStatChannels');
         const heroStatCategories = document.getElementById('heroStatCategories');
@@ -311,11 +318,7 @@
 
         function playStream(url, name) {
             streamTitle.innerText = name;
-            
-            if (player.controlBar.qualityButton) {
-                player.controlBar.removeChild(player.controlBar.qualityButton);
-                player.controlBar.qualityButton = null;
-            }
+            externalQualityModule.innerHTML = ''; // Clear previous engine instances
             
             player.src({ 
                 src: url, 
@@ -333,7 +336,7 @@
             let qualityLevels = player.qualityLevels ? player.qualityLevels() : null;
             
             if (!qualityLevels) {
-                createStaticQualityUI("Auto (Single Stream)");
+                createStaticQualityUI("Single Source Stream");
                 return;
             }
 
@@ -343,7 +346,7 @@
 
             setTimeout(() => {
                 if (qualityLevels.length <= 1) {
-                    createStaticQualityUI("Auto (Single Stream)");
+                    createStaticQualityUI("Single Source Stream");
                 } else {
                     updateQualityMenu(qualityLevels);
                     restorePreferredQuality(qualityLevels);
@@ -352,15 +355,11 @@
         }
 
         function createStaticQualityUI(labelString) {
-            if (player.controlBar.qualityButton) return;
-
-            const Button = videojs.getComponent('Button');
-            const staticBtn = new Button(player, {
-                className: 'vjs-visible-text-toggle text-xs px-2 cursor-default font-mono text-gray-400 flex items-center',
-            });
-            
-            staticBtn.el().innerHTML = `<span class="text-neutral-500 mr-1">⚙</span> Quality: ${labelString}`;
-            player.controlBar.qualityButton = player.controlBar.addChild(staticBtn);
+            externalQualityModule.innerHTML = `
+                <div class="text-[11px] font-mono text-gray-500 bg-neutral-900 border border-white/5 px-3 py-1.5 rounded-lg select-none">
+                    ⚙ Quality: <span class="text-neutral-400">${labelString}</span>
+                </div>
+            `;
         }
 
         function updateQualityMenu(qualityLevels) {
@@ -378,12 +377,11 @@
             let preferred = localStorage.getItem('streamPulse_preferredQuality') || 'auto';
             let currentLabel = preferred === 'auto' ? 'Auto' : `${preferred}p`;
 
-            // If it already exists, just update its elements natively to preserve mouse positioning context
-            if (player.controlBar.qualityButton) {
-                const labelContainer = player.controlBar.qualityButton.el().querySelector('.quality-label-text');
-                if (labelContainer) labelContainer.innerText = currentLabel;
-                
-                const deck = player.controlBar.qualityButton.el().querySelector('#qualityDropdownDeck');
+            // If the element is already mounted, update values inside the running instance
+            const existingBtn = document.getElementById('qualityTriggerBtn');
+            if (existingBtn) {
+                existingBtn.querySelector('.quality-label-text').innerText = currentLabel;
+                const deck = document.getElementById('qualityDropdownDeck');
                 if (deck) {
                     deck.innerHTML = renderDropdownButtons(uniqueLevels, preferred);
                     attachDropdownButtonEvents(deck, qualityLevels);
@@ -391,34 +389,29 @@
                 return;
             }
 
-            const Component = videojs.getComponent('Component');
-            const qualityMenuBtn = new Component(player, {
-                className: 'vjs-control vjs-button relative cursor-pointer flex items-center justify-center font-mono text-xs text-gray-300 hover:text-emerald-400 transition-all duration-200'
-            });
-
-            qualityMenuBtn.el().innerHTML = `
-                <div class="flex items-center px-3 h-full gap-1.5 select-none hover:bg-white/5 rounded-md transition">
-                    <span class="text-xs text-gray-400">⚙</span> 
+            // Build out the brand new premium external dropdown architecture
+            externalQualityModule.innerHTML = `
+                <button id="qualityTriggerBtn" class="flex items-center px-3 py-1.5 bg-neutral-900 border border-white/10 rounded-lg font-mono text-xs text-gray-300 hover:text-emerald-400 hover:border-emerald-500/30 transition select-none gap-1.5">
+                    <span class="text-gray-500">⚙</span> 
                     <span>Quality: <span class="font-bold text-emerald-400 quality-label-text">${currentLabel}</span></span>
-                </div>
-                <div id="qualityDropdownDeck" class="absolute bottom-12 right-0 mb-1 hidden bg-neutral-900/95 backdrop-blur-lg border border-white/10 rounded-xl p-1.5 w-36 shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col space-y-0.5 animate-[fadeIn_0.15s_ease-out] z-50">
+                </button>
+                <div id="qualityDropdownDeck" class="absolute bottom-full right-0 mb-2 hidden bg-neutral-950 border border-white/10 rounded-xl p-1.5 w-36 shadow-[0_15px_35px_rgba(0,0,0,0.8)] flex flex-col space-y-0.5 z-50">
                     ${renderDropdownButtons(uniqueLevels, preferred)}
                 </div>
             `;
 
-            const deck = qualityMenuBtn.el().querySelector('#qualityDropdownDeck');
+            const trigger = document.getElementById('qualityTriggerBtn');
+            const deck = document.getElementById('qualityDropdownDeck');
 
-            // JavaScript explicit event assignment to handle closing and opening safely
-            qualityMenuBtn.el().addEventListener('mouseenter', () => {
+            // Reliable Hover Controls
+            externalQualityModule.addEventListener('mouseenter', () => {
                 deck.style.setProperty('display', 'flex', 'important');
             });
-
-            qualityMenuBtn.el().addEventListener('mouseleave', () => {
+            externalQualityModule.addEventListener('mouseleave', () => {
                 deck.style.setProperty('display', 'none', 'important');
             });
 
             attachDropdownButtonEvents(deck, qualityLevels);
-            player.controlBar.qualityButton = player.controlBar.addChild(qualityMenuBtn);
         }
 
         function renderDropdownButtons(uniqueLevels, preferred) {
@@ -426,9 +419,9 @@
             let autoClass = autoSelected ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/20' : 'text-gray-400 border-transparent';
             
             let html = `
-                <button data-quality="auto" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all flex justify-between items-center ${autoClass}">
+                <button data-quality="auto" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all text-xs flex justify-between items-center ${autoClass}">
                     <span>Auto</span>
-                    ${autoSelected ? '<span class="text-[10px]">●</span>' : ''}
+                    ${autoSelected ? '<span class="text-[8px]">●</span>' : ''}
                 </button>
             `;
 
@@ -436,9 +429,9 @@
                 let isSel = preferred === String(lvl.height);
                 let lvlClass = isSel ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/20' : 'text-gray-400 border-transparent';
                 html += `
-                    <button data-quality="${lvl.height}" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all flex justify-between items-center ${lvlClass}">
+                    <button data-quality="${lvl.height}" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all text-xs flex justify-between items-center ${lvlClass}">
                         <span>${lvl.height}p</span>
-                        ${isSel ? '<span class="text-[10px]">●</span>' : ''}
+                        ${isSel ? '<span class="text-[8px]">●</span>' : ''}
                     </button>
                 `;
             });
@@ -452,10 +445,10 @@
                     let targetQuality = btn.getAttribute('data-quality');
                     savePreferredQuality(targetQuality, qualityLevels);
                     
-                    // Instantly collapse the dropdown visual layout
+                    // Collapse instantly upon choice selection
                     deckElement.style.setProperty('display', 'none', 'important');
 
-                    // Run clean local indicators update instead of component refresh loops
+                    // Synchronize and cycle calculations inside the engine module
                     updateQualityMenu(qualityLevels);
                 };
             });
