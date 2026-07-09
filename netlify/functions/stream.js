@@ -1,46 +1,51 @@
-// netlify/functions/stream.js
+const fetch = require('node-fetch'); // Ensure node-fetch is in your dependencies
 
-export default async (req, context) => {
-    const PRIVATE_M3U_URL = process.env.MY_SECRET_M3U;
-
-    if (!PRIVATE_M3U_URL) {
-        return new Response(
-            JSON.stringify({ error: "Missing configuration variable: MY_SECRET_M3U" }), 
-            { status: 500, headers: { "Content-Type": "application/json" } }
-        );
-    }
+exports.handler = async (event, context) => {
+    // Array of your M3U API stream endpoints retrieved from environment variables
+    const playlistUrls = [
+        process.env.STREAM_SOURCE_URL, // Your primary URL
+        process.env.M3U_SOURCE_TWO,    // Additional source 2
+        process.env.M3U_SOURCE_THREE   // Additional source 3
+    ].filter(Boolean); // Filters out any undefined variables safely
 
     try {
-        // Securely pull playlist content while pretending to be a normal desktop browser
-        const providerResponse = await fetch(PRIVATE_M3U_URL, {
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            }
-        });
-        
-        if (!providerResponse.ok) {
-            return new Response(`IPTV Provider error status: ${providerResponse.status}`, { status: 400 });
-        }
-
-        const rawM3uData = await providerResponse.text();
-
-        return new Response(rawM3uData, {
-            status: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Content-Type": "text/plain; charset=utf-8"
-            }
-        });
-
-    } catch (err) {
-        return new Response(
-            JSON.stringify({ error: "Failed to connect to streaming provider." }), 
-            { status: 500, headers: { "Content-Type": "application/json" } }
+        // Fetch all playlists simultaneously
+        const requests = playlistUrls.map(url => 
+            fetch(url)
+                .then(res => res.ok ? res.text() : '')
+                .catch(() => '') // Gracefully skip a source if it goes offline
         );
-    }
-};
+        
+        const playlistsContent = await Promise.all(requests);
+        
+        // Combine the outputs into one valid master M3U string
+        let masterM3U = "#EXTM3U\n";
+        
+        playlistsContent.forEach(content => {
+            // Clean up individual string chunks and split them by line
+            const lines = content.split('\n');
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                // Avoid duplicating the main #EXTM3U header tags
+                if (trimmed && !trimmed.startsWith('#EXTM3U')) {
+                    masterM3U += trimmed + "\n";
+                }
+            });
+        });
 
-export const config = {
-    path: "/.netlify/functions/stream"
+        return {
+            statusCode: 200,
+            headers: {
+                "Content-Type": "text/plain",
+                "Access-Control-Allow-Origin": "*", // Prevents CORS errors on your player
+            },
+            body: masterM3U
+        };
+
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Failed compiling aggregated stream pool profiles." })
+        };
+    }
 };
