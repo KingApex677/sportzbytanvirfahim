@@ -56,7 +56,7 @@
         <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <span class="text-white font-semibold text-lg tracking-tight">Stream<span class="text-emerald-400 font-bold">Pulse</span></span>
-                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v6.0 Ultima Console</span>
+                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v6.2 Ultima Console</span>
             </div>
             <div id="syncStatus" class="text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full animate-pulse">
                 Establishing Secure Proxy Tunnel...
@@ -156,11 +156,20 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.02] border border-white/5 p-3 rounded-xl">
-                    <div class="flex items-center gap-3 truncate max-w-sm">
-                        <div id="playbackIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></div>
-                        <div class="text-xs truncate">
-                            <span class="text-gray-500">Active Stream:</span> 
-                            <span id="streamTitle" class="text-white font-medium ml-1">No source active</span>
+                    <div class="flex flex-col space-y-1.5 truncate max-w-sm">
+                        <div class="flex items-center gap-3 truncate">
+                            <div id="playbackIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></div>
+                            <div class="text-xs truncate">
+                                <span class="text-gray-500">Active Stream:</span> 
+                                <span id="streamTitle" class="text-white font-medium ml-1">No source active</span>
+                            </div>
+                        </div>
+                        <div id="viewerCounterBlock" class="hidden items-center gap-1.5 pl-5 select-none animate-[fadeIn_0.2s_key]">
+                            <span class="text-[10px] font-mono uppercase tracking-wider text-neutral-500">Live Viewers:</span>
+                            <div class="flex items-center gap-1 bg-rose-500/10 border border-rose-500/20 rounded px-1.5 py-0.5">
+                                <span class="w-1 h-1 rounded-full bg-rose-500 animate-ping"></span>
+                                <span id="viewerCountValue" class="text-[11px] font-mono font-bold text-rose-400">0</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -221,6 +230,11 @@
         let retryCounter = 0;
         const MAX_RETRIES = 2; 
         
+        // Viewer Counter Loop tracking parameters
+        let baseViewerMultiplier = 0;
+        let currentViewerValue = 0;
+        let viewerIntervalLoop = null;
+        
         const player = videojs('my-video');
         const channelListContainer = document.getElementById('channelList');
         const categoryContainer = document.getElementById('categoryContainer');
@@ -231,6 +245,8 @@
         const telemetryOverlayPanel = document.getElementById('telemetryOverlayPanel');
         const premiumBufferOverlay = document.getElementById('premiumBufferOverlay');
         const bufferOverlayLabel = document.getElementById('bufferOverlayLabel');
+        const viewerCounterBlock = document.getElementById('viewerCounterBlock');
+        const viewerCountValue = document.getElementById('viewerCountValue');
 
         const heroStatChannels = document.getElementById('heroStatChannels');
         const heroStatCategories = document.getElementById('heroStatCategories');
@@ -273,6 +289,9 @@
         player.on('error', function() {
             const err = player.error();
             console.warn(`Stream Pulse Exception Core [Code ${err.code}]: ${err.message}`);
+            
+            // Turn counter hidden if stream completely drops off
+            viewerCounterBlock.className = "hidden";
             
             if (currentActiveUrl && retryCounter < MAX_RETRIES) {
                 retryCounter++;
@@ -354,7 +373,6 @@
             }
         }
 
-        // --- STRAY CHARACTER REMOVED FROM THIS FUNCTION ---
         function parseM3U(data) {
             const lines = data.split(/\r?\n/);
             const parsed = [];
@@ -503,9 +521,39 @@
                 initializeQualitySelector();
                 renderTelemetryMetrics(url);
                 renderChannels(); 
+                // Initialize the counter heartbeat loop routine
+                initializeViewerTrackerLoop(name);
             });
 
             player.play().catch(err => console.error(err));
+        }
+
+        // Real-time Concurrent Viewer Simulation Engine Heartbeat Loop
+        function initializeViewerTrackerLoop(channelName) {
+            if (viewerIntervalLoop) clearInterval(viewerIntervalLoop);
+            
+            // Set a unique base pool depending on stream name hash to differentiate popularity
+            let internalHash = 0;
+            for (let i = 0; i < channelName.length; i++) {
+                internalHash = channelName.charCodeAt(i) + ((internalHash << 5) - internalHash);
+            }
+            
+            baseViewerMultiplier = Math.abs(internalHash % 850) + 120; // Pool sizing range
+            currentViewerValue = baseViewerMultiplier;
+            
+            viewerCountValue.innerText = currentViewerValue.toLocaleString();
+            viewerCounterBlock.className = "flex items-center gap-1.5 pl-5 select-none animate-[fadeIn_0.2s_key]";
+
+            viewerIntervalLoop = setInterval(() => {
+                // Natural fluid volatility updates (-3% to +3% change vectors)
+                let varianceFactor = Math.floor(baseViewerMultiplier * 0.03);
+                let fluctuation = Math.floor(Math.random() * (varianceFactor * 2 + 1)) - varianceFactor;
+                
+                currentViewerValue += fluctuation;
+                if (currentViewerValue < 12) currentViewerValue = 12; // Safety floor clamp
+                
+                viewerCountValue.innerText = currentViewerValue.toLocaleString();
+            }, 3500);
         }
 
         function renderTelemetryMetrics(url) {
