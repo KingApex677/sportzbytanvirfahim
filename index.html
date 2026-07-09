@@ -56,10 +56,10 @@
         <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <span class="text-white font-semibold text-lg tracking-tight">Stream<span class="text-emerald-400 font-bold">Pulse</span></span>
-                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v6.2 Ultima Console</span>
+                <span class="text-[10px] bg-white/5 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase tracking-widest font-mono">v7.0 Core</span>
             </div>
             <div id="syncStatus" class="text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full animate-pulse">
-                Establishing Secure Proxy Tunnel...
+                Awaiting Playlist Assignment...
             </div>
         </div>
     </header>
@@ -79,7 +79,7 @@
                             <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></span>
                         </div>
                         <p id="dynamicStatus" class="text-xs text-gray-400 max-w-xl">
-                            Establishing telemetry data stream connection...
+                            Select or link an M3U configuration pool to begin matrix parsing.
                         </p>
                     </div>
                 </div>
@@ -184,8 +184,7 @@
                             <span>Snapshot</span>
                         </button>
 
-                        <div id="externalQualityModule" class="relative">
-                            </div>
+                        <div id="externalQualityModule" class="relative"></div>
 
                         <div class="text-right font-mono text-[11px] tracking-wider text-gray-400 flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 flex-shrink-0">
                             <span id="liveDate" class="text-gray-500 hidden md:inline">---</span>
@@ -199,24 +198,63 @@
                     <span class="text-[11px] font-bold tracking-wider text-gray-500 uppercase flex items-center gap-1.5">
                         <span class="w-1 h-3 bg-emerald-400 rounded-sm"></span> Stream Categories
                     </span>
-                    <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth">
-                        </div>
+                    <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"></div>
                 </div>
 
             </div>
 
             <div class="flex flex-col bg-neutral-900/40 border border-white/5 rounded-xl backdrop-blur-sm overflow-hidden h-[650px] lg:h-full lg:min-h-[500px]">
+                
+                <div class="p-4 border-b border-white/5 bg-black/40 flex flex-col space-y-2">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-neutral-500">Active Secret M3U Context:</span>
+                    <div class="flex gap-1.5">
+                        <select id="playlistSelectDropdown" onchange="changeActivePlaylist(this.value)" class="flex-grow bg-neutral-950 border border-white/10 rounded-lg text-xs text-emerald-400 font-mono px-2.5 py-2 focus:outline-none focus:border-emerald-500/40 transition">
+                            </select>
+                        <button onclick="togglePlaylistModal(true)" class="bg-neutral-800 border border-white/10 hover:border-cyan-500/30 hover:text-cyan-400 text-xs px-2.5 rounded-lg transition" title="Manage secret playlist links">
+                            ⚙️
+                        </button>
+                    </div>
+                </div>
+
                 <div class="p-4 border-b border-white/5 bg-black/20 flex-shrink-0">
                     <input type="text" id="searchChannel" placeholder="Search filtered pool..." class="w-full bg-white/[0.03] border border-white/10 text-white pl-3 pr-8 py-2 rounded-lg text-xs focus:outline-none focus:border-emerald-500/40 transition">
                 </div>
                 
                 <div id="channelList" class="overflow-y-auto flex-grow p-2 space-y-1">
-                    <div class="text-gray-600 text-center py-12 text-xs">Awaiting secure parsing pipeline decode...</div>
+                    <div class="text-gray-600 text-center py-12 text-xs">No active links parsed. Open configurations to add.</div>
                 </div>
             </div>
 
         </div>
     </main>
+
+    <div id="playlistModalBackdrop" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-[fadeIn_0.2s_ease-out]">
+        <div class="bg-neutral-900 border border-white/10 w-full max-w-xl rounded-xl p-5 flex flex-col space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-white/5 pb-3">
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-semibold text-white">M3U Secret Key Pipeline Registry</h3>
+                    <p class="text-[11px] text-gray-500">Manage multiple encrypted or private M3U configuration links.</p>
+                </div>
+                <button onclick="togglePlaylistModal(false)" class="text-xs text-gray-500 hover:text-white bg-white/5 px-2 py-1 rounded">Close</button>
+            </div>
+
+            <div class="bg-black/30 p-3 rounded-lg border border-white/5 flex flex-col space-y-2.5">
+                <span class="text-[10px] font-mono text-emerald-400 uppercase tracking-widest">Link New Secret Playlist</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="text" id="modalPlaylistName" placeholder="e.g., UK Premium Pack" class="col-span-1 bg-neutral-950 text-xs border border-white/10 text-white rounded p-2 focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="modalPlaylistUrl" placeholder="https://secret-domain.xyz/get.php?auth=123" class="col-span-2 bg-neutral-950 text-xs border border-white/10 text-white rounded p-2 focus:outline-none focus:border-emerald-500">
+                </div>
+                <button onclick="addNewSecretPlaylist()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold py-2 rounded transition shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                    + Inject Pool Link into Browser Storage
+                </button>
+            </div>
+
+            <div class="flex flex-col space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                <span class="text-[10px] font-mono text-gray-500 uppercase">Registered Storage Vault Links</span>
+                <div id="modalPlaylistsList" class="space-y-1"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
@@ -230,10 +268,15 @@
         let retryCounter = 0;
         const MAX_RETRIES = 2; 
         
-        // Viewer Counter Loop tracking parameters
         let baseViewerMultiplier = 0;
         let currentViewerValue = 0;
         let viewerIntervalLoop = null;
+
+        // Secret M3U Multiversal Playlist Storage Matrix Arrays
+        let customPlaylists = JSON.parse(localStorage.getItem('streamPulse_m3u_pools')) || [
+            { name: "Default Server Proxy", url: "/.netlify/functions/stream" }
+        ];
+        let currentActivePlaylistIndex = parseInt(localStorage.getItem('streamPulse_active_index')) || 0;
         
         const player = videojs('my-video');
         const channelListContainer = document.getElementById('channelList');
@@ -247,6 +290,7 @@
         const bufferOverlayLabel = document.getElementById('bufferOverlayLabel');
         const viewerCounterBlock = document.getElementById('viewerCounterBlock');
         const viewerCountValue = document.getElementById('viewerCountValue');
+        const playlistSelectDropdown = document.getElementById('playlistSelectDropdown');
 
         const heroStatChannels = document.getElementById('heroStatChannels');
         const heroStatCategories = document.getElementById('heroStatCategories');
@@ -275,7 +319,7 @@
                 finalGreeting = 'Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">🌙</span>';
             }
             greetingElement.innerHTML = finalGreeting;
-            statusElement.innerText = "Secure Stream Gateway Active & Verified";
+            statusElement.innerText = "Multi-playlist Core System Active and Ready.";
         }
 
         player.on('waiting', () => {
@@ -289,8 +333,6 @@
         player.on('error', function() {
             const err = player.error();
             console.warn(`Stream Pulse Exception Core [Code ${err.code}]: ${err.message}`);
-            
-            // Turn counter hidden if stream completely drops off
             viewerCounterBlock.className = "hidden";
             
             if (currentActiveUrl && retryCounter < MAX_RETRIES) {
@@ -320,16 +362,13 @@
         });
 
         function triggerAutoNextFallback() {
-            console.warn("Current active stream unresponsive. Parsing fallback matrices for next logical channel...");
             let currentIndex = allChannels.findIndex(c => c.url === currentActiveUrl);
-            
             if (currentIndex !== -1 && allChannels.length > 1) {
                 let nextIndex = (currentIndex + 1) % allChannels.length;
                 let nextChannel = allChannels[nextIndex];
                 
                 document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse flex-shrink-0";
                 streamTitle.innerText = `Failed. Auto Skipping to: ${nextChannel.name}`;
-                
                 bufferOverlayLabel.innerText = "Stream Dead. Skipping...";
                 premiumBufferOverlay.classList.remove('opacity-0', 'pointer-events-none');
 
@@ -350,26 +389,123 @@
             heroStatFavorites.innerText = favoriteChannelUrls.length.toString();
         }
 
-        async function loadSecureNetlifyPlaylist() {
+        // --- MODAL ACTIONS ENGINE CONTROLS ---
+        function togglePlaylistModal(open) {
+            const modal = document.getElementById('playlistModalBackdrop');
+            if (open) {
+                modal.classList.remove('hidden');
+                renderModalPlaylistsList();
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderDropdownAndSync() {
+            playlistSelectDropdown.innerHTML = '';
+            customPlaylists.forEach((p, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = p.name;
+                if (idx === currentActivePlaylistIndex) opt.selected = true;
+                playlistSelectDropdown.appendChild(opt);
+            });
+        }
+
+        function renderModalPlaylistsList() {
+            const container = document.getElementById('modalPlaylistsList');
+            container.innerHTML = '';
+            customPlaylists.forEach((p, idx) => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between items-center bg-black/40 border border-white/5 p-2 rounded text-xs font-mono";
+                row.innerHTML = `
+                    <div class="flex flex-col truncate max-w-sm" style="max-width: 24rem;">
+                        <span class="text-white font-medium">${p.name}</span>
+                        <span class="text-[10px] text-gray-500 truncate">${p.url}</span>
+                    </div>
+                    ${idx === 0 ? '<span class="text-[9px] text-gray-600 px-2">SYSTEM</span>' : `
+                        <button onclick="deleteSecretPlaylist(${idx})" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded hover:bg-rose-500/20 text-[11px]">Delete</button>
+                    `}
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function addNewSecretPlaylist() {
+            const nameInput = document.getElementById('modalPlaylistName');
+            const urlInput = document.getElementById('modalPlaylistUrl');
+            
+            const name = nameInput.value.trim();
+            const url = urlInput.value.trim();
+
+            if (!name || !url) {
+                alert("Please fully satisfy both name mapping labels and secure M3U target links.");
+                return;
+            }
+
+            customPlaylists.push({ name, url });
+            localStorage.setItem('streamPulse_m3u_pools', JSON.stringify(customPlaylists));
+            
+            nameInput.value = '';
+            urlInput.value = '';
+            
+            renderModalPlaylistsList();
+            renderDropdownAndSync();
+        }
+
+        function deleteSecretPlaylist(index) {
+            if (index === 0) return;
+            customPlaylists.splice(index, 1);
+            
+            if (currentActivePlaylistIndex >= customPlaylists.length) {
+                currentActivePlaylistIndex = 0;
+                localStorage.setItem('streamPulse_active_index', 0);
+            }
+
+            localStorage.setItem('streamPulse_m3u_pools', JSON.stringify(customPlaylists));
+            renderModalPlaylistsList();
+            renderDropdownAndSync();
+            loadActiveM3uCoreTarget();
+        }
+
+        function changeActivePlaylist(indexValue) {
+            currentActivePlaylistIndex = parseInt(indexValue);
+            localStorage.setItem('streamPulse_active_index', currentActivePlaylistIndex);
+            loadActiveM3uCoreTarget();
+        }
+
+        async function loadActiveM3uCoreTarget() {
+            const activePool = customPlaylists[currentActivePlaylistIndex] || customPlaylists[0];
+            
+            allChannels = [];
+            filteredChannels = [];
+            renderCategories();
+            renderChannels();
+
             try {
                 updateGreeting();
-                const response = await fetch('/.netlify/functions/stream');
-                if (!response.ok) throw new Error(`HTTP Error`);
+                syncStatus.innerText = `Connecting: ${activePool.name.toUpperCase()}`;
+                syncStatus.className = "text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full animate-pulse";
+
+                const response = await fetch(activePool.url);
+                if (!response.ok) throw new Error(`HTTP Matrix Fetch Exception`);
                 const data = await response.text();
 
                 if (data && data.trim().length > 0) {
                     allChannels = parseM3U(data);
                     filteredChannels = allChannels;
+                    currentSelectedCategory = "All Channels";
                     renderCategories();
-                    renderChannels();
+                    filterAndRenderPool();
                     updateDashboardStats();
+                    
+                    syncStatus.innerText = `Synced: ${allChannels.length} Channels`;
+                    syncStatus.className = "text-xs text-emerald-400 font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full";
                 }
-                syncStatus.innerText = "Secure Node Tunneled";
-                syncStatus.className = "text-xs text-emerald-400 font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full";
             } catch (error) {
-                syncStatus.innerText = "Offline Mode Active";
-                syncStatus.className = "text-xs text-amber-400 font-mono bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full";
-                channelListContainer.innerHTML = `<div class="text-gray-500 text-center py-12 text-xs px-4">Local environment streaming link ready. Check server configuration.</div>`;
+                console.error(error);
+                syncStatus.innerText = "Parsing Connection Interrupted";
+                syncStatus.className = "text-xs text-rose-400 font-mono bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-full";
+                channelListContainer.innerHTML = `<div class="text-gray-500 text-center py-12 text-xs px-4">Failed decoding M3U payload. Verify link permissions or check browser CORS restrictions.</div>`;
             }
         }
 
@@ -442,7 +578,6 @@
             }
             filteredChannels.forEach(channel => {
                 const isFavorite = favoriteChannelUrls.includes(channel.url);
-                
                 const rowWrapper = document.createElement('div');
                 rowWrapper.className = "w-full flex items-center gap-1 group/row rounded-lg hover:bg-white/[0.03] pr-2 transition duration-200";
 
@@ -464,14 +599,11 @@
                     </div>
                 `;
                 
-                itemBtn.onclick = () => {
-                    playStream(channel.url, channel.name);
-                };
+                itemBtn.onclick = () => playStream(channel.url, channel.name);
 
                 const favBtn = document.createElement('button');
                 favBtn.className = `p-2 text-sm transition-all rounded-md ${isFavorite ? 'text-amber-400 opacity-100 scale-100' : 'text-gray-600 opacity-20 hover:opacity-100 hover:text-white scale-90 hover:scale-100'}`;
                 favBtn.innerHTML = "★";
-                favBtn.title = isFavorite ? "Remove from Favorites" : "Add to Favorites";
                 favBtn.onclick = (e) => {
                     e.stopPropagation();
                     toggleFavoriteChannel(channel.url);
@@ -485,19 +617,13 @@
 
         function toggleFavoriteChannel(url) {
             let index = favoriteChannelUrls.indexOf(url);
-            if (index === -1) {
-                favoriteChannelUrls.push(url);
-            } else {
-                favoriteChannelUrls.splice(index, 1);
-            }
+            if (index === -1) favoriteChannelUrls.push(url);
+            else favoriteChannelUrls.splice(index, 1);
             localStorage.setItem('streamPulse_favs', JSON.stringify(favoriteChannelUrls));
             
             updateDashboardStats();
-            if (currentSelectedCategory === "❤️ Favorites Pool") {
-                filterAndRenderPool();
-            } else {
-                renderChannels();
-            }
+            if (currentSelectedCategory === "❤️ Favorites Pool") filterAndRenderPool();
+            else renderChannels();
         }
 
         function playStream(url, name) {
@@ -521,36 +647,32 @@
                 initializeQualitySelector();
                 renderTelemetryMetrics(url);
                 renderChannels(); 
-                // Initialize the counter heartbeat loop routine
                 initializeViewerTrackerLoop(name);
             });
 
             player.play().catch(err => console.error(err));
         }
 
-        // Real-time Concurrent Viewer Simulation Engine Heartbeat Loop
         function initializeViewerTrackerLoop(channelName) {
             if (viewerIntervalLoop) clearInterval(viewerIntervalLoop);
             
-            // Set a unique base pool depending on stream name hash to differentiate popularity
             let internalHash = 0;
             for (let i = 0; i < channelName.length; i++) {
                 internalHash = channelName.charCodeAt(i) + ((internalHash << 5) - internalHash);
             }
             
-            baseViewerMultiplier = Math.abs(internalHash % 850) + 120; // Pool sizing range
+            baseViewerMultiplier = Math.abs(internalHash % 850) + 120;
             currentViewerValue = baseViewerMultiplier;
             
             viewerCountValue.innerText = currentViewerValue.toLocaleString();
             viewerCounterBlock.className = "flex items-center gap-1.5 pl-5 select-none animate-[fadeIn_0.2s_key]";
 
             viewerIntervalLoop = setInterval(() => {
-                // Natural fluid volatility updates (-3% to +3% change vectors)
                 let varianceFactor = Math.floor(baseViewerMultiplier * 0.03);
                 let fluctuation = Math.floor(Math.random() * (varianceFactor * 2 + 1)) - varianceFactor;
                 
                 currentViewerValue += fluctuation;
-                if (currentViewerValue < 12) currentViewerValue = 12; // Safety floor clamp
+                if (currentViewerValue < 12) currentViewerValue = 12;
                 
                 viewerCountValue.innerText = currentViewerValue.toLocaleString();
             }, 3500);
@@ -639,15 +761,9 @@
                 </div>
             `;
 
-            const trigger = document.getElementById('qualityTriggerBtn');
             const deck = document.getElementById('qualityDropdownDeck');
-
-            externalQualityModule.addEventListener('mouseenter', () => {
-                deck.style.setProperty('display', 'flex', 'important');
-            });
-            externalQualityModule.addEventListener('mouseleave', () => {
-                deck.style.setProperty('display', 'none', 'important');
-            });
+            externalQualityModule.addEventListener('mouseenter', () => deck.style.setProperty('display', 'flex', 'important'));
+            externalQualityModule.addEventListener('mouseleave', () => deck.style.setProperty('display', 'none', 'important'));
 
             attachDropdownButtonEvents(deck, qualityLevels);
         }
@@ -690,15 +806,11 @@
 
         function savePreferredQuality(targetQuality, qualityLevels) {
             localStorage.setItem('streamPulse_preferredQuality', targetQuality);
-
             if (targetQuality === 'auto') {
-                for (let i = 0; i < qualityLevels.length; i++) {
-                    qualityLevels[i].enabled = true;
-                }
+                for (let i = 0; i < qualityLevels.length; i++) qualityLevels[i].enabled = true;
             } else {
                 let heightTarget = parseInt(targetQuality);
                 let matchFound = false;
-
                 for (let i = 0; i < qualityLevels.length; i++) {
                     if (qualityLevels[i].height === heightTarget) {
                         qualityLevels[i].enabled = true;
@@ -707,7 +819,6 @@
                         qualityLevels[i].enabled = false;
                     }
                 }
-
                 if (!matchFound) {
                     for (let i = 0; i < qualityLevels.length; i++) qualityLevels[i].enabled = true;
                 }
@@ -716,9 +827,7 @@
 
         function restorePreferredQuality(qualityLevels) {
             let preferred = localStorage.getItem('streamPulse_preferredQuality');
-            if (preferred) {
-                savePreferredQuality(preferred, qualityLevels);
-            }
+            if (preferred) savePreferredQuality(preferred, qualityLevels);
         }
 
         function triggerStreamCapture() {
@@ -727,7 +836,6 @@
                 alert("Cannot capture image: No active video data stream detected.");
                 return;
             }
-
             try {
                 const canvas = document.createElement('canvas');
                 canvas.width = videoElement.videoWidth || videoElement.clientWidth;
@@ -755,7 +863,11 @@
         }
 
         searchInput.addEventListener('input', filterAndRenderPool);
-        window.onload = loadSecureNetlifyPlaylist;
+        
+        window.onload = function() {
+            renderDropdownAndSync();
+            loadActiveM3uCoreTarget();
+        };
     </script>
 </body>
 </html>
