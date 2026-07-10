@@ -1,69 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="blue">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamPulse Premium App</title>
+    <title>TanvixStream Premium App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     
-    <script>
-        // Extend Tailwind with dynamic theme custom properties
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        accent: {
-                            DEFAULT: 'var(--accent-primary)',
-                            hover: 'var(--accent-hover)',
-                            light: 'var(--accent-light)',
-                            glow: 'var(--accent-glow)',
-                            text: 'var(--accent-text)',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        /* Theme Theme Variables Definitions */
-        :root, [data-theme="green"] {
-            --accent-primary: #10b981; /* emerald-500 */
-            --accent-hover: #059669;   /* emerald-600 */
-            --accent-light: rgba(16, 185, 129, 0.08);
-            --accent-glow: rgba(16, 185, 129, 0.26);
-            --accent-text: #6ee7b7;    /* emerald-300 */
-        }
-        [data-theme="blue"] {
-            --accent-primary: #3b82f6; /* blue-500 */
-            --accent-hover: #2563eb;   /* blue-600 */
-            --accent-light: rgba(59, 130, 246, 0.08);
-            --accent-glow: rgba(59, 130, 246, 0.26);
-            --accent-text: #93c5fd;    /* blue-300 */
-        }
-        [data-theme="purple"] {
-            --accent-primary: #a855f7; /* purple-500 */
-            --accent-hover: #9333ea;   /* purple-600 */
-            --accent-light: rgba(168, 85, 247, 0.08);
-            --accent-glow: rgba(168, 85, 247, 0.26);
-            --accent-text: #d8b4fe;    /* purple-300 */
-        }
-        [data-theme="orange"] {
-            --accent-primary: #f97316; /* orange-500 */
-            --accent-hover: #ea580c;   /* orange-600 */
-            --accent-light: rgba(249, 115, 22, 0.08);
-            --accent-glow: rgba(249, 115, 22, 0.26);
-            --accent-text: #ffedd5;    /* orange-200 / 300 */
-        }
-        [data-theme="red"] {
-            --accent-primary: #ef4444; /* red-500 */
-            --accent-hover: #dc2626;   /* red-600 */
-            --accent-light: rgba(239, 68, 68, 0.08);
-            --accent-glow: rgba(239, 68, 68, 0.26);
-            --accent-text: #fca5a5;    /* red-300 */
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
@@ -75,7 +19,7 @@
         .bg-cyber-dark {
             background-color: #0b1110;
             background-image: 
-                radial-gradient(circle at 70% 30%, var(--accent-light) 0%, transparent 45%),
+                radial-gradient(circle at 70% 30%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
                 radial-gradient(circle at 20% 70%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
         }
         
@@ -87,9 +31,9 @@
             display: none !important;
         }
         .video-js .vjs-big-play-button {
-            background-color: var(--accent-light) !important;
-            border-color: var(--accent-primary) !important;
-            color: var(--accent-primary) !important;
+            background-color: rgba(20, 184, 166, 0.2) !important;
+            border-color: #14b8a6 !important;
+            color: #14b8a6 !important;
             border-radius: 50% !important;
             width: 3em !important; height: 3em !important; line-height: 3em !important;
             margin-left: -1.5em !important; margin-top: -1.5em !important;
@@ -108,16 +52,16 @@
         }
         .app-header {
             background:
-                linear-gradient(90deg, var(--accent-light), transparent 36%, rgba(6, 182, 212, 0.06)),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.08), transparent 36%, rgba(6, 182, 212, 0.06)),
                 rgba(0, 0, 0, 0.34);
             box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 12px 38px rgba(0, 0, 0, 0.22);
         }
         .brand-mark {
-            background: linear-gradient(135deg, var(--accent-primary), rgba(6, 182, 212, 0.85));
-            box-shadow: 0 0 22px var(--accent-glow);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(6, 182, 212, 0.85));
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.26);
         }
         .version-chip {
-            background: linear-gradient(180deg, var(--accent-light), rgba(20, 184, 166, 0.05));
+            background: linear-gradient(180deg, rgba(20, 184, 166, 0.14), rgba(20, 184, 166, 0.05));
             border-color: rgba(45, 212, 191, 0.26);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
@@ -149,9 +93,9 @@
             border-color: rgba(245, 158, 11, 0.24);
         }
         .sync-online {
-            color: var(--accent-primary);
-            background: linear-gradient(180deg, var(--accent-light), rgba(16, 185, 129, 0.06));
-            border-color: var(--accent-glow);
+            color: #34d399;
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.16), rgba(16, 185, 129, 0.06));
+            border-color: rgba(16, 185, 129, 0.28);
         }
         .sync-error {
             color: #fb7185;
@@ -159,122 +103,45 @@
             border-color: rgba(244, 63, 94, 0.24);
         }
         
-        /* Splash Screen Core Styling Modules */
-        .splash-wave-bar {
-            animation: splashWave 1.2s ease-in-out infinite both;
-        }
-        @keyframes splashWave {
-            0%, 100% { transform: scaleY(0.3); }
-            50% { transform: scaleY(1); }
-        }
-        .splash-glow-sphere {
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-        }
-
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #0f1715; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+        ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
     </style>
 </head>
-<body class="bg-cyber-dark text-gray-300 font-sans min-h-screen flex flex-col antialiased selection:bg-accent/30 overflow-hidden">
+<body class="bg-cyber-dark text-gray-300 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500/30">
 
-    <!-- Premium Animated Splash Screen Overlay -->
-    <div id="splashScreen" class="fixed inset-0 bg-[#070b0a] z-[100] flex flex-col items-center justify-center transition-all duration-700 ease-out p-6 backdrop-blur-md">
-        <div class="absolute w-[500px] h-[500px] splash-glow-sphere top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-60 transition-all duration-500" id="splashAmbientGlow"></div>
-        
-        <div id="splashContentBlock" class="relative flex flex-col items-center max-w-sm w-full text-center space-y-8 transition-all duration-500 transform scale-100 opacity-100">
-            <div class="relative group">
-                <div class="absolute -inset-2 bg-gradient-to-r from-accent to-cyan-500 rounded-2xl blur opacity-40 group-hover:opacity-70 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-                <div class="relative w-16 h-16 brand-mark rounded-2xl flex items-center justify-center text-black font-black text-xl tracking-tighter">
-                    SP
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <h2 class="text-white text-2xl font-light tracking-tight">Stream<span class="text-accent font-bold">Pulse</span></h2>
-                <p id="splashStatusText" class="text-xs font-mono text-gray-400 h-4 tracking-wide uppercase">Initializing Architecture</p>
-            </div>
-
-            <div class="flex items-end justify-center gap-1.5 h-8 w-32">
-                <div class="splash-wave-bar w-1 bg-accent rounded-full h-full" style="animation-delay: 0.1s"></div>
-                <div class="splash-wave-bar w-1 bg-accent/80 rounded-full h-full" style="animation-delay: 0.3s"></div>
-                <div class="splash-wave-bar w-1 bg-cyan-400 rounded-full h-full" style="animation-delay: 0.5s"></div>
-                <div class="splash-wave-bar w-1 bg-accent rounded-full h-full" style="animation-delay: 0.2s"></div>
-                <div class="splash-wave-bar w-1 bg-accent/60 rounded-full h-full" style="animation-delay: 0.4s"></div>
-            </div>
-
-            <button id="splashSafeOverride" onclick="dismissSplashScreen()" class="opacity-0 pointer-events-none bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-gray-400 hover:text-white px-4 py-2 rounded-lg text-[11px] font-mono tracking-widest uppercase transition-all duration-300">
-                Skip Operational Sync
-            </button>
-        </div>
-    </div>
-
-    <!-- Header Block Component -->
     <header class="app-header border-b border-white/5 backdrop-blur-xl px-4 sm:px-6 py-3.5">
         <div class="max-w-7xl mx-auto w-full flex justify-between items-center gap-4">
             <div class="flex items-center gap-3 min-w-0">
-                <span class="brand-mark w-9 h-9 rounded-xl flex items-center justify-center text-black font-black text-sm tracking-tighter flex-shrink-0">SP</span>
-                <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 min-w-0">
-                    <span class="text-white font-semibold text-xl tracking-tight leading-none">Stream<span class="text-accent font-bold" id="brandPulseWord">Pulse</span></span>
-                    <span class="version-chip text-[10px] text-accent border px-2 py-1 rounded-md uppercase tracking-[0.2em] font-mono w-fit">v7.0 Core</span>
-                </div>
+                <span class="brand-mark w-9 h-9 rounded-xl flex items-center justify-center text-black font-black text-sm tracking-tighter flex-shrink-0">TS</span>
+                <a href="/" class="flex flex-col min-w-0 hover:opacity-85 transition-opacity" title="Go to Default Homepage">
+                    <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                        <span class="text-white font-semibold text-xl tracking-tight leading-none">Tanvix<span class="text-emerald-400 font-bold">Stream</span></span>
+                        <span class="version-chip text-[10px] text-emerald-300 border px-2 py-1 rounded-md uppercase tracking-[0.2em] font-mono w-fit">v7.0 Core</span>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-light mt-1 tracking-wide truncate max-w-xs sm:max-w-md hidden xs:block">Your ultimate escape into endless entertainment. Ready, set, binge.</span>
+                </a>
             </div>
-            
-            <div class="flex items-center gap-4 ml-auto">
-                <!-- Aesthetic Matrix Social Media Hub Menu Block -->
-                <div class="flex items-center gap-4 bg-neutral-900/60 border border-white/5 px-3.5 py-1.5 rounded-xl">
-                    <!-- GitHub Profile -->
-                    <a href="https://github.com/KingApex677/sportzbytanvirfahim" target="https://github.com/KingApex677/sportzbytanvirfahim" rel="noopener noreferrer" title="View Source on GitHub" class="text-gray-400 hover:text-accent transition duration-200 transform hover:scale-110 flex items-center justify-center">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.008.069-.008 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
-                        </svg>
-                    </a>
-                    <!-- Telegram Community -->
-                    <a href="https://t.me/LosersDan" target="t.me/LosersDan" rel="noopener noreferrer" title="Join Telegram Channel" class="text-gray-400 hover:text-accent transition duration-200 transform hover:scale-110 flex items-center justify-center">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1 .22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.24-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.3-2.73 7.57-3.26 3.61-1.51 4.36-1.77 4.85-1.78.11 0 .35.03.5.16.13.12.17.28.19.39.02.07.02.21.01.27z"></path>
-                        </svg>
-                    </a>
-                    <!-- Facebook Portal -->
-                    <a href="https://www.facebook.com/lost.tailes.canyon/" target="https://www.facebook.com/lost.tailes.canyon/" rel="noopener noreferrer" title="Follow on Facebook" class="text-gray-400 hover:text-accent transition duration-200 transform hover:scale-110 flex items-center justify-center">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.95z"></path>
-                        </svg>
-                    </a>
-                </div>
-
-                <!-- Theme Control Menu -->
-                <div class="relative inline-block text-left">
-                    <select id="themeSelector" class="bg-neutral-900 border border-white/10 text-gray-300 rounded-lg text-xs font-mono px-3 py-1.5 focus:outline-none focus:border-accent transition cursor-pointer">
-                        <option value="green">🟢 Green Theme</option>
-                        <option value="blue">🔵 Blue Theme</option>
-                        <option value="purple">🟣 Purple Theme</option>
-                        <option value="orange">🟠 Orange Theme</option>
-                        <option value="red">🔴 Red Theme</option>
-                    </select>
-                </div>
-
-                <div id="syncStatus" class="sync-pill sync-loading animate-pulse whitespace-nowrap hidden sm:inline-flex">
-                    Awaiting Playlist Assignment...
-                </div>
+            <div id="syncStatus" class="sync-pill sync-loading animate-pulse whitespace-nowrap">
+                Awaiting Playlist Assignment...
             </div>
         </div>
     </header>
 
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col space-y-6">
         
-        <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-neutral-900 via-neutral-900/90 to-neutral-950/20 p-6 shadow-xl">
-            <div class="absolute -right-10 -top-20 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none" id="heroBackgroundGlow"></div>
+        <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-neutral-900 via-neutral-900/90 to-emerald-950/20 p-6 shadow-xl">
+            <div class="absolute -right-10 -top-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
             
             <div class="relative flex flex-col space-y-6">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div class="space-y-1 animate-[fadeIn_0.5s_ease-out]">
                         <div class="flex items-center gap-2">
                             <h1 id="dynamicGreeting" class="text-2xl font-light tracking-tight text-white leading-none">
-                                Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400 font-semibold">👋</span>
+                                Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>
                             </h1>
-                            <span class="w-2 h-2 bg-accent rounded-full animate-pulse" id="heroDotIndicator"></span>
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></span>
                         </div>
                         <p id="dynamicStatus" class="text-xs text-gray-400 max-w-xl">
                             Matrix streaming operational framework connected.
@@ -283,8 +150,8 @@
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-accent/20 hover:bg-black/40 transition-all duration-300">
-                        <div class="absolute top-0 left-0 w-full h-[2px] bg-accent/20 group-hover:bg-accent/50 transition duration-300"></div>
+                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-emerald-500/20 hover:bg-black/40 transition-all duration-300">
+                        <div class="absolute top-0 left-0 w-full h-[2px] bg-emerald-500/20 group-hover:bg-emerald-400/50 transition duration-300"></div>
                         <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">📺 Channels</span>
                         <span id="heroStatChannels" class="text-2xl font-bold text-white font-mono">0</span>
                     </div>
@@ -301,11 +168,11 @@
                         <span id="heroStatFavorites" class="text-2xl font-bold text-rose-400 font-mono">0</span>
                     </div>
 
-                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-purple-500/20 hover:bg-black/40 transition-all duration-300">
+                    <div class="bg-black/30 backdrop-blur-sm border border-white/5 p-4 rounded-xl flex flex-col space-y-1 relative overflow-hidden group hover:border-purple-500/20 hover:bg-purple-400/50 transition-all duration-300">
                         <div class="absolute top-0 left-0 w-full h-[2px] bg-purple-500/20 group-hover:bg-purple-400/50 transition duration-300"></div>
                         <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">🔴 Live Status</span>
                         <div class="grid grid-cols-3 gap-2 pt-1 font-mono">
-                            <div><span id="healthOnlineCount" class="text-md font-bold text-accent">0</span><span class="block text-[8px] text-gray-500 uppercase">Online</span></div>
+                            <div><span id="healthOnlineCount" class="text-md font-bold text-emerald-400">0</span><span class="block text-[8px] text-gray-500 uppercase">Online</span></div>
                             <div><span id="healthOfflineCount" class="text-md font-bold text-rose-400">0</span><span class="block text-[8px] text-gray-500 uppercase">Offline</span></div>
                             <div><span id="healthCheckingCount" class="text-md font-bold text-amber-400">0</span><span class="block text-[8px] text-gray-500 uppercase">Checking</span></div>
                         </div>
@@ -321,13 +188,13 @@
                 
                 <div class="flex flex-col space-y-2">
                     <span class="text-[11px] font-bold tracking-wider text-gray-500 uppercase flex items-center gap-1.5">
-                        <span class="w-1 h-3 bg-accent rounded-sm"></span> Stream Categories
+                        <span class="w-1 h-3 bg-emerald-400 rounded-sm"></span> Stream Categories
                     </span>
                     <div id="categoryContainer" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"></div>
                 </div>
 
                 <div class="relative bg-black rounded-xl p-1 border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] group overflow-hidden">
-                    <div class="absolute -inset-1 bg-gradient-to-r from-accent/10 to-cyan-500/10 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
                     
                     <div class="relative bg-black rounded-lg aspect-video w-full overflow-hidden shadow-inner">
                         <video id="my-video" class="video-js vjs-big-play-centered w-full h-full" controls preload="auto" crossorigin="anonymous">
@@ -336,9 +203,9 @@
 
                         <div id="premiumBufferOverlay" class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center backdrop-blur-[2px] opacity-0 pointer-events-none transition-all duration-300 z-10">
                             <div class="w-48 bg-neutral-900 border border-white/5 h-1.5 rounded-full relative overflow-hidden mb-2 shadow-inner">
-                                <div class="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-transparent via-accent to-cyan-400 rounded-full animate-pulse-track"></div>
+                                <div class="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-transparent via-emerald-400 to-cyan-400 rounded-full animate-pulse-track"></div>
                             </div>
-                            <span id="bufferOverlayLabel" class="text-[10px] font-mono tracking-widest uppercase text-accent font-semibold">Loading Stream</span>
+                            <span id="bufferOverlayLabel" class="text-[10px] font-mono tracking-widest uppercase text-emerald-400 font-semibold drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">Loading Stream</span>
                         </div>
                     </div>
                 </div>
@@ -354,7 +221,7 @@
                     </div>
                     <div class="bg-white/[0.01] border border-white/[0.03] px-3 py-1.5 rounded-lg flex flex-col">
                         <span class="text-[9px] text-gray-500 uppercase tracking-wider font-semibold">Framerate</span>
-                        <span id="telemetryFPS" class="text-xs font-mono font-bold text-accent mt-0.5">50 FPS</span>
+                        <span id="telemetryFPS" class="text-xs font-mono font-bold text-emerald-400 mt-0.5">50 FPS</span>
                     </div>
                     <div class="bg-white/[0.01] border border-white/[0.03] px-3 py-1.5 rounded-lg flex flex-col">
                         <span class="text-[9px] text-gray-500 uppercase tracking-wider font-semibold">End-To-End Latency</span>
@@ -365,7 +232,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.02] border border-white/5 p-3 rounded-xl">
                     <div class="flex flex-col space-y-1.5 truncate max-w-sm">
                         <div class="flex items-center gap-3 truncate">
-                            <div id="playbackIndicatorDot" class="w-2 h-2 rounded-full bg-accent animate-pulse flex-shrink-0"></div>
+                            <div id="playbackIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></div>
                             <div class="text-xs truncate">
                                 <span class="text-gray-500">Active Stream:</span> 
                                 <span id="streamTitle" class="text-white font-medium ml-1">No source active</span>
@@ -381,8 +248,8 @@
                     </div>
                     
                     <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
-                        <button id="refreshStreamBtn" onclick="refreshActiveStream()" class="flex items-center px-2.5 py-1.5 bg-neutral-900 border border-white/10 rounded-lg font-mono text-xs text-gray-300 hover:text-accent hover:border-accent/30 transition active:scale-95 select-none gap-1">
-                            <span class="text-accent font-bold">⟳</span> 
+                        <button id="refreshStreamBtn" onclick="refreshActiveStream()" class="flex items-center px-2.5 py-1.5 bg-neutral-900 border border-white/10 rounded-lg font-mono text-xs text-gray-300 hover:text-emerald-400 hover:border-emerald-500/30 transition active:scale-95 select-none gap-1">
+                            <span class="text-emerald-500 font-bold">⟳</span> 
                             <span>Refresh</span>
                         </button>
 
@@ -403,13 +270,12 @@
 
             </div>
 
-            <!-- Channels Listing Sidebar View -->
-            <div class="flex flex-col bg-neutral-900/40 border border-white/5 rounded-xl backdrop-blur-sm overflow-hidden h-[600px] lg:h-[730px] w-full">
+            <div class="flex flex-col bg-neutral-900/40 border border-white/5 rounded-xl backdrop-blur-sm overflow-hidden h-[650px] lg:h-full lg:min-h-[500px]">
                 <div class="p-4 border-b border-white/5 bg-black/20 flex-shrink-0 space-y-3">
-                    <input type="text" id="searchChannel" placeholder="Search operational channels..." class="w-full bg-white/[0.03] border border-white/10 text-white pl-3 pr-8 py-2 rounded-lg text-xs focus:outline-none focus:border-accent/40 transition">
+                    <input type="text" id="searchChannel" placeholder="Search operational channels..." class="w-full bg-white/[0.03] border border-white/10 text-white pl-3 pr-8 py-2 rounded-lg text-xs focus:outline-none focus:border-emerald-500/40 transition">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-gray-400 select-none cursor-pointer">
-                            <input id="hideOfflineToggle" type="checkbox" class="accent-accent cursor-pointer">
+                        <label class="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-gray-400 select-none">
+                            <input id="hideOfflineToggle" type="checkbox" class="accent-emerald-500">
                             Hide Offline Channels
                         </label>
                         <div id="healthLoadingIndicator" class="hidden items-center gap-1.5 text-[10px] font-mono text-amber-400">
@@ -419,7 +285,7 @@
                     </div>
                 </div>
                 
-                <div id="channelList" class="overflow-y-auto flex-grow p-2 relative h-full">
+                <div id="channelList" class="overflow-y-auto flex-grow p-2">
                     <div class="text-gray-600 text-center py-12 text-xs">Awaiting data parsing connection...</div>
                 </div>
             </div>
@@ -442,7 +308,7 @@
         let currentSelectedCategory = "All Channels";
         let currentActiveUrl = "";
         let currentActiveName = "";
-        let retryCounter = 0;
+        let retryCounter = 0; 
         const MAX_RETRIES = 2; 
         const HEALTH_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
         const HEALTH_SWEEP_INTERVAL_MS = 9000;
@@ -453,7 +319,6 @@
         let baseViewerMultiplier = 0;
         let currentViewerValue = 0;
         let viewerIntervalLoop = null;
-        let splashTextInterval = null;
 
         const STREAM_SOURCE_URL = "/.netlify/functions/stream";
         
@@ -480,81 +345,6 @@
         const healthCheckingCount = document.getElementById('healthCheckingCount');
         const healthLastUpdated = document.getElementById('healthLastUpdated');
 
-        const themeSelector = document.getElementById('themeSelector');
-        
-        function applyAccentTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('streamPulse_accentTheme', themeName);
-            themeSelector.value = themeName;
-            
-            const dotIndicator = document.getElementById('heroDotIndicator');
-            const bgGlow = document.getElementById('heroBackgroundGlow');
-            const splashAmbient = document.getElementById('splashAmbientGlow');
-            
-            let colorHex = '#10b981';
-            let alphaGlow = 'rgba(16, 185, 129, 0.1)';
-            
-            if (themeName === 'blue') { colorHex = '#3b82f6'; alphaGlow = 'rgba(59, 130, 246, 0.1)'; }
-            else if (themeName === 'purple') { colorHex = '#a855f7'; alphaGlow = 'rgba(168, 85, 247, 0.1)'; }
-            else if (themeName === 'orange') { colorHex = '#f97316'; alphaGlow = 'rgba(249, 115, 22, 0.1)'; }
-            else if (themeName === 'red') { colorHex = '#ef4444'; alphaGlow = 'rgba(239, 68, 68, 0.1)'; }
-            
-            if(dotIndicator) dotIndicator.style.boxShadow = `0 0 8px ${colorHex}`;
-            if(bgGlow) bgGlow.style.backgroundColor = alphaGlow;
-            if(splashAmbient) splashAmbient.style.background = `radial-gradient(circle, var(--accent-glow) 0%, transparent 70%)`;
-            
-            if (allChannels.length > 0) {
-                renderCategories();
-                renderChannels();
-            }
-        }
-
-        themeSelector.addEventListener('change', (e) => {
-            applyAccentTheme(e.target.value);
-        });
-
-        function runSplashScreenLoader() {
-            const statusLabel = document.getElementById('splashStatusText');
-            const overrideBtn = document.getElementById('splashSafeOverride');
-            const sequences = [
-                "Initializing Architecture",
-                "Establishing Core Node Link",
-                "Parsing Packet Matrix",
-                "Filtering Operational Shards",
-                "Synchronizing Pipeline Feed"
-            ];
-            let index = 0;
-            
-            splashTextInterval = setInterval(() => {
-                index = (index + 1) % sequences.length;
-                if(statusLabel) statusLabel.innerText = sequences[index];
-            }, 750);
-
-            setTimeout(() => {
-                if(overrideBtn) {
-                    overrideBtn.classList.remove('opacity-0', 'pointer-events-none');
-                }
-            }, 4500);
-        }
-
-        function dismissSplashScreen() {
-            const overlay = document.getElementById('splashScreen');
-            const content = document.getElementById('splashContentBlock');
-            if (!overlay) return;
-
-            if (splashTextInterval) clearInterval(splashTextInterval);
-            
-            if(content) {
-                content.classList.replace('scale-100', 'scale-95');
-                content.classList.replace('opacity-100', 'opacity-0');
-            }
-            
-            setTimeout(() => {
-                overlay.classList.add('opacity-0', 'pointer-events-none');
-                document.body.classList.remove('overflow-hidden');
-            }, 250);
-        }
-
         function updateClock() {
             const now = new Date();
             document.getElementById('liveDate').innerText = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
@@ -568,13 +358,13 @@
             
             let finalGreeting = "";
             if (currentHour >= 5 && currentHour < 12) {
-                finalGreeting = 'Good Morning <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400 font-semibold">👋</span>';
+                finalGreeting = 'Good Morning <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>';
             } else if (currentHour >= 12 && currentHour < 17) {
-                finalGreeting = 'Good Afternoon <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400 font-semibold">👋</span>';
+                finalGreeting = 'Good Afternoon <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>';
             } else if (currentHour >= 17 && currentHour < 21) {
-                finalGreeting = 'Good Evening <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400 font-semibold">👋</span>';
+                finalGreeting = 'Good Evening <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">👋</span>';
             } else {
-                finalGreeting = 'Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-cyan-400 font-semibold">🌙</span>';
+                finalGreeting = 'Welcome Back <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-semibold">🌙</span>';
             }
             greetingElement.innerHTML = finalGreeting;
         }
@@ -589,7 +379,7 @@
 
         player.on('error', function() {
             const err = player.error();
-            console.warn(`Stream Pulse Exception Core [Code ${err.code}]: ${err.message}`);
+            console.warn(`TanvixStream Exception Core [Code ${err.code}]: ${err.message}`);
             viewerCounterBlock.className = "hidden";
             
             if (currentActiveUrl && retryCounter < MAX_RETRIES) {
@@ -607,7 +397,7 @@
                     player.load();
                     player.play().then(() => {
                         retryCounter = 0;
-                        document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-accent animate-pulse flex-shrink-0";
+                        document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0";
                         streamTitle.innerText = currentActiveName;
                         premiumBufferOverlay.classList.add('opacity-0', 'pointer-events-none');
                     }).catch(e => console.log("Retrying lifecycle waiting..."));
@@ -621,6 +411,7 @@
             let currentIndex = allChannels.findIndex(c => c.url === currentActiveUrl);
             const nextChannel = findNextPlayableChannel(allChannels, currentIndex);
             if (nextChannel) {
+                
                 document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse flex-shrink-0";
                 streamTitle.innerText = `Failed. Auto Skipping to: ${nextChannel.name}`;
                 bufferOverlayLabel.innerText = "Stream Dead. Skipping...";
@@ -636,14 +427,17 @@
             }
         }
 
+        // Creates the default health state for channels that have not received a backend result yet.
         function createDefaultHealth() {
             return { online: false, offline: false, checking: true, responseTime: null, lastChecked: null };
         }
 
+        // Returns true when a channel is currently marked offline by the health monitor.
         function isChannelOffline(channel) {
-            return Boolean(channel && channel.health && channel.health.offline === true);
+            return Boolean(channel && channel.health && channel.health.offline);
         }
 
+        // Finds the next channel that is not offline, wrapping around the supplied channel list.
         function findNextPlayableChannel(channelPool, startIndex) {
             if (!channelPool.length) return null;
             for (let offset = 1; offset <= channelPool.length; offset++) {
@@ -654,6 +448,7 @@
             return null;
         }
 
+        // Finds the previous channel that is not offline, wrapping around the supplied channel list.
         function findPreviousPlayableChannel(channelPool, startIndex) {
             if (!channelPool.length) return null;
             for (let offset = 1; offset <= channelPool.length; offset++) {
@@ -664,6 +459,7 @@
             return null;
         }
 
+        // Reads either enriched JSON or legacy M3U text from the playlist response.
         async function readPlaylistPayload(response) {
             const contentType = response.headers.get('content-type') || '';
             if (contentType.includes('application/json')) {
@@ -672,6 +468,7 @@
             return response.text();
         }
 
+        // Normalizes backend JSON and legacy M3U into the same channel array used by the UI.
         function normalizePlaylistPayload(payload) {
             if (typeof payload === 'string') {
                 return { channels: parseM3U(payload), health: null };
@@ -695,6 +492,7 @@
             return { channels, health: payload.health || null };
         }
 
+        // Merges fresh health data into existing channels without disturbing UI filters or playback state.
         function mergeHealthIntoChannels(incomingChannels) {
             const healthByUrl = new Map();
             incomingChannels.forEach(channel => {
@@ -707,14 +505,14 @@
             });
         }
 
+        // Displays or hides the compact health loading indicator in the channel panel.
         function setHealthLoading(isLoading) {
-            if(healthLoadingIndicator) {
-                healthLoadingIndicator.className = isLoading
-                    ? "flex items-center gap-1.5 text-[10px] font-mono text-amber-400"
-                    : "hidden items-center gap-1.5 text-[10px] font-mono text-amber-400";
-            }
+            healthLoadingIndicator.className = isLoading
+                ? "flex items-center gap-1.5 text-[10px] font-mono text-amber-400"
+                : "hidden items-center gap-1.5 text-[10px] font-mono text-amber-400";
         }
 
+        // Formats the last health update timestamp for the dashboard card.
         function formatHealthTimestamp(value) {
             if (!value) return '--';
             const date = new Date(value);
@@ -775,10 +573,6 @@
                     
                     syncStatus.innerText = `Synced: ${allChannels.length} Channels`;
                     syncStatus.className = "sync-pill sync-online whitespace-nowrap";
-                    
-                    if(!isBackgroundRefresh) {
-                        dismissSplashScreen();
-                    }
                 }
             } catch (error) {
                 console.error(error);
@@ -825,8 +619,8 @@
             sortedCategories.forEach(category => {
                 const btn = document.createElement('button');
                 btn.className = category === currentSelectedCategory
-                    ? "bg-accent text-black font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap shadow-[0_0_15px_var(--accent-glow)] transition-all duration-200"
-                    : "bg-white/[0.02] text-gray-400 hover:text-white font-medium text-xs px-4 py-2 rounded-lg whitespace-nowrap border border-white/5 transition-all duration-200";
+                    ? "bg-emerald-500 text-black font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+                    : "bg-white/[0.02] text-gray-400 hover:text-white font-medium text-xs px-4 py-2 rounded-lg whitespace-nowrap border border-white/5";
                 btn.innerText = category;
                 btn.onclick = () => {
                     currentSelectedCategory = category;
@@ -857,6 +651,7 @@
             renderChannels();
         }
 
+        // Escapes channel text before inserting it into virtualized row HTML.
         function escapeHtml(value) {
             return String(value || '').replace(/[&<>"']/g, char => ({
                 '&': '&amp;',
@@ -867,10 +662,11 @@
             }[char]));
         }
 
+        // Builds the compact colored health badge shown beside each channel name.
         function renderHealthBadge(channel) {
             const health = channel.health || createDefaultHealth();
             if (health.online) {
-                return '<span class="shrink-0 text-[9px] font-mono uppercase rounded-full bg-accent/10 text-accent border border-accent/20 px-1.5 py-0.5">Online</span>';
+                return '<span class="shrink-0 text-[9px] font-mono uppercase rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5">Online</span>';
             }
             if (health.offline) {
                 return '<span class="shrink-0 text-[9px] font-mono uppercase rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5">Offline</span>';
@@ -878,6 +674,7 @@
             return '<span class="shrink-0 text-[9px] font-mono uppercase rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5">Checking</span>';
         }
 
+        // Returns hover text with response time and last checked data for a channel row.
         function getHealthTitle(channel) {
             const health = channel.health || createDefaultHealth();
             const response = health.responseTime === null || health.responseTime === undefined ? 'Pending' : `${health.responseTime}ms`;
@@ -885,6 +682,7 @@
             return `Response time: ${response} | Last checked: ${checked}`;
         }
 
+        // Creates one channel row for the virtualized list viewport.
         function createChannelRow(channel, top) {
             const isFavorite = favoriteChannelUrls.includes(channel.url);
             const isOffline = isChannelOffline(channel);
@@ -898,12 +696,12 @@
             itemBtn.disabled = isOffline;
             itemBtn.className = `flex-grow text-left px-3 py-2.5 flex items-center gap-3 text-xs truncate h-full ${isOffline ? 'cursor-not-allowed' : ''}`;
             if (currentActiveUrl === channel.url) {
-                itemBtn.className += " bg-accent/[0.04] border-l-2 border-accent pl-2.5";
+                itemBtn.className += " bg-emerald-500/[0.04] border-l-2 border-emerald-500 pl-2.5";
             }
 
             const imgHtml = channel.logo
                 ? `<img src="${escapeHtml(channel.logo)}" class="w-5 h-5 object-contain rounded opacity-60" loading="lazy">`
-                : `<div class="w-5 h-5 bg-white/5 flex items-center justify-center rounded text-[9px] text-accent">■</div>`;
+                : `<div class="w-5 h-5 bg-white/5 flex items-center justify-center rounded text-[9px] text-emerald-400">■</div>`;
 
             itemBtn.innerHTML = `
                 ${imgHtml}
@@ -931,6 +729,7 @@
             return rowWrapper;
         }
 
+        // Renders only the visible channel rows so very large playlists keep scrolling smoothly.
         function renderVirtualChannelWindow() {
             if (virtualRenderFrame) cancelAnimationFrame(virtualRenderFrame);
             virtualRenderFrame = requestAnimationFrame(() => {
@@ -962,6 +761,7 @@
             canvas.style.height = `${filteredChannels.length * VIRTUAL_ROW_HEIGHT}px`;
             channelListContainer.appendChild(canvas);
             renderVirtualChannelWindow();
+            return;
         }
 
         function toggleFavoriteChannel(url) {
@@ -984,7 +784,7 @@
             retryCounter = 0; 
             
             streamTitle.innerText = name;
-            document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-accent animate-pulse flex-shrink-0";
+            document.getElementById('playbackIndicatorDot').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0";
             externalQualityModule.innerHTML = ''; 
             
             bufferOverlayLabel.innerText = "Initializing Feed";
@@ -1104,9 +904,9 @@
             }
 
             externalQualityModule.innerHTML = `
-                <button id="qualityTriggerBtn" class="flex items-center px-3 py-1.5 bg-neutral-900 border border-white/10 rounded-lg font-mono text-xs text-gray-300 hover:text-accent hover:border-accent/30 transition select-none gap-1.5">
+                <button id="qualityTriggerBtn" class="flex items-center px-3 py-1.5 bg-neutral-900 border border-white/10 rounded-lg font-mono text-xs text-gray-300 hover:text-emerald-400 hover:border-emerald-500/30 transition select-none gap-1.5">
                     <span class="text-gray-500">⚙</span> 
-                    <span>Quality: <span class="font-bold text-accent quality-label-text">${currentLabel}</span></span>
+                    <span>Quality: <span class="font-bold text-emerald-400 quality-label-text">${currentLabel}</span></span>
                 </button>
                 <div id="qualityDropdownDeck" class="absolute bottom-full right-0 mb-2 hidden bg-neutral-950 border border-white/10 rounded-xl p-1.5 w-36 shadow-[0_15px_35px_rgba(0,0,0,0.8)] flex flex-col space-y-0.5 z-50">
                     ${renderDropdownButtons(uniqueLevels, preferred)}
@@ -1122,10 +922,10 @@
 
         function renderDropdownButtons(uniqueLevels, preferred) {
             let autoSelected = preferred === 'auto';
-            let autoClass = autoSelected ? 'bg-accent/10 text-accent font-bold border-accent/20' : 'text-gray-400 border-transparent';
+            let autoClass = autoSelected ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/20' : 'text-gray-400 border-transparent';
             
             let html = `
-                <button data-quality="auto" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-accent/10 hover:text-white transition-all text-xs flex justify-between items-center ${autoClass}">
+                <button data-quality="auto" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all text-xs flex justify-between items-center ${autoClass}">
                     <span>Auto</span>
                     ${autoSelected ? '<span class="text-[8px]">●</span>' : ''}
                 </button>
@@ -1133,9 +933,9 @@
 
             uniqueLevels.forEach(lvl => {
                 let isSel = preferred === String(lvl.height);
-                let lvlClass = isSel ? 'bg-accent/10 text-accent font-bold border-accent/20' : 'text-gray-400 border-transparent';
+                let lvlClass = isSel ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/20' : 'text-gray-400 border-transparent';
                 html += `
-                    <button data-quality="${lvl.height}" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-accent/10 hover:text-white transition-all text-xs flex justify-between items-center ${lvlClass}">
+                    <button data-quality="${lvl.height}" class="w-full text-left px-2.5 py-1.5 rounded-lg border hover:bg-emerald-500/10 hover:text-white transition-all text-xs flex justify-between items-center ${lvlClass}">
                         <span>${lvl.height}p</span>
                         ${isSel ? '<span class="text-[8px]">●</span>' : ''}
                     </button>
@@ -1203,7 +1003,7 @@
                 const timestamp = new Date().toISOString().slice(0,19).replace(/[:T]/g, '-');
                 
                 downloadAnchor.href = imageURI;
-                downloadAnchor.download = `streampulse_moment_${activeName}_${timestamp}.png`;
+                downloadAnchor.download = `tanvixstream_moment_${activeName}_${timestamp}.png`;
                 
                 document.body.appendChild(downloadAnchor);
                 downloadAnchor.click();
@@ -1213,6 +1013,7 @@
                 alert("Snapshot blocked. The current streaming provider restricts local frame extraction via CORS security profiles.");
             }
         }
+
 
         function initializeKeyboardShortcuts() {
             document.addEventListener('keydown', function(e) {
@@ -1284,6 +1085,8 @@
             });
         }
 
+
+        // Starts the recurring background health refresh without blocking normal page use.
         function startHealthAutoRefresh() {
             if (healthRefreshTimer) clearInterval(healthRefreshTimer);
             healthRefreshTimer = setInterval(() => {
@@ -1291,6 +1094,7 @@
             }, HEALTH_REFRESH_INTERVAL_MS);
         }
 
+        // Requests the next health-check window so large playlists gradually leave checking state.
         async function sweepNextHealthWindow() {
             if (healthSweepRunning || !allChannels.length) return;
             healthSweepRunning = true;
@@ -1304,11 +1108,13 @@
             }
         }
 
+        // Starts frequent rotating health sweeps while keeping the normal 15-minute full refresh.
         function startHealthSweep() {
             if (healthSweepTimer) clearInterval(healthSweepTimer);
             healthSweepTimer = setInterval(sweepNextHealthWindow, HEALTH_SWEEP_INTERVAL_MS);
         }
 
+        // Applies the saved hide-offline setting to the toggle and current channel pool.
         function initializeHealthControls() {
             hideOfflineToggle.checked = hideOfflineChannels;
             hideOfflineToggle.addEventListener('change', () => {
@@ -1323,11 +1129,6 @@
         searchInput.addEventListener('input', filterAndRenderPool);
         
         window.onload = function() {
-            const savedTheme = localStorage.getItem('streamPulse_accentTheme') || 'blue';
-            applyAccentTheme(savedTheme);
-
-            runSplashScreenLoader();
-
             initializeKeyboardShortcuts();
             initializeHealthControls();
             loadPlaylistData().then(() => {
