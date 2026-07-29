@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚽ StreamPulse
+# ⚽ TanvixStream
 
 ### A Modern Cyber-Themed Live Sports & IPTV Streaming Dashboard
 
