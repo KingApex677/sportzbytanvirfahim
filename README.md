@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"/>
 </p>
 
-🌐 **Live Demo:** https://sportzbytanvirfahim.netlify.app/
+🌐 **Live Demo:** https://tanvixstream.netlify.app
 
 *A premium streaming dashboard designed for a fast, responsive, and immersive live sports viewing experience.*
 
